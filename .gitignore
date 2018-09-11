@@ -1,0 +1,19 @@
+# .gitignore file for ECE 266, created by Zhao Zhang in fall 2017
+
+# Ignore CCS project files and Debug/ and targetConfigs/ directories.
+# Note 1: Project files should generally not be tracked because 
+# partners may have different installation directories for CCS and 
+# TivaWare.
+# Note 2: The command linker file is tracked.
+**/.DS_store
+**/.ccsproject
+**/.cproject
+**/.launches/
+**/.project
+**/.settings/
+**/Debug/
+**/targetConfigs/
+
+# Add below any particular files or file patterns you want to ignore or not to ignore.
+# See https://git-scm.com/docs/gitignore for guideline
+
