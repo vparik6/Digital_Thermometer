@@ -33,6 +33,12 @@ static uint8_t seg7Coding[10] = {
 		0b00000110, 		// digit 1
 		0b01011011,			// digit 2
 		0b01001111,			// digit 3
+		0b01100110,         // digit 4
+		0b01101101,         // digit 5
+		0b01111101,         // digit 6
+		0b00000111,         // digit 7
+		0b01111111,         // digit 8
+		0b01101111,         // digit 9
 		// MORE CODINGS
 };
 
@@ -48,18 +54,50 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 
 	// Display 01:23 on the 7-segment displays
 	// The colon ':' will flash on and off every 0.5 seconds
-	code[0] = seg7Coding[3] + colon;
-	code[1] = seg7Coding[2] + colon;
-	code[2] = seg7Coding[1] + colon;
+
+	code[0] = seg7Coding[0] + colon;
+	code[1] = seg7Coding[0] + colon;
+	code[2] = seg7Coding[0] + colon;
 	code[3] = seg7Coding[0] + colon;
 	seg7Update(code);
 
+
 	// Calculate the display digits and colon setting for the next update
+	int s1 = 0;
+	int s2 = 0;
+	int m1 = 0;
+	int m2 = 0;
+int x =0;
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
 	}
-	else {
-		colon = 0b00000000;
+	else{
+	   while(){
+	           code[0] = seg7Coding[s1] + colon;
+	           s1++;
+	          if (s1 == 10) {
+	              s1 = 0;
+	              s2++;
+	              code[1] = seg7Coding[s2] + colon;
+	          }
+	          if(s2 == 10) {
+	              s2 = 0;
+	              m1++;
+	              code[2] = seg7Coding[m1] + colon;
+	          }
+	          if(m1 == 10) {
+	              m1 = 0;
+	              m2++;
+	              code[3] = seg7Coding[m2] + colon;
+	          }
+	          if(m2 == 6) {
+	             s1=0;
+	             s2=0;
+	             m1=0;
+	             m2=0;
+	          }
+	   }
+	  colon = 0b00000000;
 	}
 
 	// Call back after 1 second
