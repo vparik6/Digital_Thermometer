@@ -67,15 +67,18 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 	int s2 = 0;
 	int m1 = 0;
 	int m2 = 0;
-int x =0;
+
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
+		s1++;
+		code[0] = seg7Coding[s1] + colon;
 	}
 	else{
-	   while(){
-	           code[0] = seg7Coding[s1] + colon;
-	           s1++;
-	          if (s1 == 10) {
+	    colon = 0b00000000;
+
+
+
+	           if (s1 == 10) {
 	              s1 = 0;
 	              s2++;
 	              code[1] = seg7Coding[s2] + colon;
@@ -96,8 +99,7 @@ int x =0;
 	             m1=0;
 	             m2=0;
 	          }
-	   }
-	  colon = 0b00000000;
+
 	}
 
 	// Call back after 1 second
