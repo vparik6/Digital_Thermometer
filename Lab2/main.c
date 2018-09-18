@@ -21,6 +21,7 @@
 
 
 // this is a test
+// test 2
 
 
 // 7-segment coding table. See https://en.wikipedia.org/wiki/Seven-segment_display. The segments
