@@ -18,6 +18,11 @@
 #include "launchpad.h"
 #include "seg7.h"
 
+
+
+// this is a test
+
+
 // 7-segment coding table. See https://en.wikipedia.org/wiki/Seven-segment_display. The segments
 // are named as A, B, C, D, E, F, G. In this coding table, segments A-G are mapped to bits 0-7.
 // Bit 7 is not used in the coding. This display uses active high signal, in which '1' turns ON a
