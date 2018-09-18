@@ -70,13 +70,13 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
-		s1++;
-		code[0] = seg7Coding[s1] + colon;
+
 	}
 	else{
 	    colon = 0b00000000;
 
-
+                s1++;
+                code[0] = seg7Coding[s1] + colon;
 
 	           if (s1 == 10) {
 	              s1 = 0;
