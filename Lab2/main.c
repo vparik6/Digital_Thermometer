@@ -19,11 +19,6 @@
 #include "seg7.h"
 
 
-
-// this is a test
-// test 2
-
-
 // 7-segment coding table. See https://en.wikipedia.org/wiki/Seven-segment_display. The segments
 // are named as A, B, C, D, E, F, G. In this coding table, segments A-G are mapped to bits 0-7.
 // Bit 7 is not used in the coding. This display uses active high signal, in which '1' turns ON a
@@ -67,23 +62,6 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 	int s2 = 0;
 	int m1 = 0;
 	int m2 = 0;
-
-
-
-
-
-
-
-
-
-////////// TEST /////////////////////////
-//test works on both local machine and github desktop/site
-//check ccs bow
-
-//code was written on ccs. Debug took over 2 hrs ---> can confirm this works
-
-
-
 
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
