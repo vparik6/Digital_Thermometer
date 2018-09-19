@@ -68,6 +68,21 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 	int m1 = 0;
 	int m2 = 0;
 
+
+
+
+
+
+
+
+
+////////// TEST /////////////////////////
+
+
+
+
+
+
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
 
