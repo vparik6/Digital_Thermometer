@@ -80,7 +80,7 @@ clockUpdate(uint32_t time)								// pointer to a 4-byte array
 //test works on both local machine and github desktop/site
 //check ccs bow
 
-
+//code was written on ccs. Debug took over 2 hrs ---> can confirm this works
 
 
 
