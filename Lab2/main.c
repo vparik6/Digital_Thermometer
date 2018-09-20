@@ -19,6 +19,8 @@
 #include "seg7.h"
 
 
+//test test
+
 // 7-segment coding table. See https://en.wikipedia.org/wiki/Seven-segment_display. The segments
 // are named as A, B, C, D, E, F, G. In this coding table, segments A-G are mapped to bits 0-7.
 // Bit 7 is not used in the coding. This display uses active high signal, in which '1' turns ON a
@@ -41,63 +43,58 @@ static uint8_t seg7Coding[10] = {
 // otherwise it is off.
 static uint8_t colon = 0;
 
+int s1 = 0;	//seconds on the right
+int s2 = 0;	//seconds on the left
+int m1 = 0; //minutes on the right
+int m2 = 0; //minutes on the left
+
+
 // Update the clock display
-void
-clockUpdate(uint32_t time)								// pointer to a 4-byte array
+void clockUpdate(uint32_t time)								// pointer to a 4-byte array
 {
 	uint8_t code[4];									// The 7-segment code for the four clock digits
+
+	// Calculate the display digits and colon setting for the next update
 
 	// Display 01:23 on the 7-segment displays
 	// The colon ':' will flash on and off every 0.5 seconds
 
-	code[0] = seg7Coding[0] + colon;
-	code[1] = seg7Coding[0] + colon;
-	code[2] = seg7Coding[0] + colon;
-	code[3] = seg7Coding[0] + colon;
+	code[0] = seg7Coding[s1] + colon;
+	code[1] = seg7Coding[s2] + colon;
+	code[2] = seg7Coding[m1] + colon;
+	code[3] = seg7Coding[m2] + colon;
 	seg7Update(code);
-
-
-	// Calculate the display digits and colon setting for the next update
-	int s1 = 0;
-	int s2 = 0;
-	int m1 = 0;
-	int m2 = 0;
 
 	if (colon == 0b00000000) {
 		colon = 0b10000000;
-
 	}
 	else{
 	    colon = 0b00000000;
 
-                s1++;
-                code[0] = seg7Coding[s1] + colon;
-
-	           if (s1 == 10) {
-	              s1 = 0;
-	              s2++;
-	              code[1] = seg7Coding[s2] + colon;
-	          }
-	          if(s2 == 10) {
-	              s2 = 0;
-	              m1++;
-	              code[2] = seg7Coding[m1] + colon;
-	          }
-	          if(m1 == 10) {
-	              m1 = 0;
-	              m2++;
-	              code[3] = seg7Coding[m2] + colon;
-	          }
-	          if(m2 == 6) {
-	             s1=0;
-	             s2=0;
-	             m1=0;
-	             m2=0;
-	          }
-
+//Because this update runs every .5 seconds, sticking the incrementer in the else statement;
+//the code will run every second
+	    s1++;
+	    if (s1 == 10) {
+	        s1 = 0;
+	        s2++;
+	    }
+	    if(s2 == 6) {
+	        s2 = 0;
+	        m1++;
+	    }
+	    if(m1 == 10) {
+	        m1 = 0;
+	        m2++;
+	    }
+	    if(m2 == 6) {
+	        s1=0;
+	        s2=0;
+	        m1=0;
+	        m2=0;
+	    }
 	}
 
-	// Call back after 1 second
+	// Call back after .5 second
 	schdCallback(clockUpdate, time + 500);
 }
 
