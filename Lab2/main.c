@@ -71,7 +71,7 @@ void clockUpdate(uint32_t time)								// pointer to a 4-byte array
 	else{
 	    colon = 0b00000000;
 
-//Because this update runs every .5 seconds, sticking the incrementer in the else statement;
+//Because this update runs every .5 se . conds, sticking the incrementer in the else statement;
 //the code will run every second
 	    s1++;
 	    if (s1 == 10) {
@@ -98,6 +98,53 @@ void clockUpdate(uint32_t time)								// pointer to a 4-byte array
 	schdCallback(clockUpdate, time + 500);
 }
 
+void checkPushButton(uint32_t time)
+{
+	// Read the pushbutton state; see pbRead() in launchpad.h
+	int code = pbRead();
+	uint32_t delay = 10;
+
+	switch (code) {
+	case 1:
+		uprintf("%s\n\r", "SW1 is pushed");
+		// Use an inertia for soft de-bouncing
+		delay = 250;
+
+		m1++;
+		if (m1 == 10) {
+			m1 = 0;
+			m2++;
+		}
+		if (m2 == 6) {
+			s1 = 0;
+			s2 = 0;
+			m1 = 0;
+			m2 = 0;
+		}
+		break;
+
+	case 2:
+		// Pring out a message
+		// See uprintf() in launchpad.h
+		uprintf("%s\n\r", "SW2 is pushed");
+		// Use an inertia for soft de-bouncing
+		delay = 250;
+		
+		s1++;
+		if (s1 == 10) {
+			s1 = 0;
+			s2++;
+		}
+		if (s2 == 6) {
+			s2 = 0;
+			m1++;
+		}
+		break;
+	}
+
+	schdCallback(checkPushButton, time + delay);
+}
+
 int main(void)
 {
 	lpInit();
@@ -108,7 +155,7 @@ int main(void)
 	// Schedule the first callback events for LED flashing and push button checking.
 	// Those trigger callback chains. The time unit is millisecond.
 	schdCallback(clockUpdate, 1000);
-
+	checkPushButton(10);
 	// Loop forever
 	while (true) {
 		schdExecute();
