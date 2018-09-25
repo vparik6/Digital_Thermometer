@@ -53,19 +53,21 @@ checkPushButton(uint32_t time)
 
     switch (code) {
     case 1:                         // SW1 is the Reset button, only when the stopwatch is paused
-
-        //
-        // YOUR CODE
-        //
+//        if (sysState == Pause) {
+//                   sysState = Reset;
+//               }
 
         delay = 250;                // software debouncing
         break;
 
     case 2:                         // SW2 is the Start/Pause/Resume button
 
-        //
-        // YOUR CODE
-        //
+        if (sysState == Pause) {
+            sysState = Run;
+        }
+        if (sysState == Run) {
+            sysState = Pause;
+        }
 
         delay = 250;                // software debouncing
         break;
@@ -81,7 +83,7 @@ int main(void)
 {
     lpInit();
     seg7Init();
-
+    sysState = Pause;
     uprintf("%s\n\r", "Lab 3: Stopwatch");
 
     // Update the clock display
