@@ -53,9 +53,14 @@ checkPushButton(uint32_t time)
 
     switch (code) {
     case 1:                         // SW1 is the Reset button, only when the stopwatch is paused
-//        if (sysState == Pause) {
-//                   sysState = Reset;
-//               }
+
+        if(sysState == Pause){
+            seg7Display.d1 = 0;
+            seg7Display.d2 = 0;
+            seg7Display.d3 = 0;
+            seg7Display.d4 = 0;
+            seg7Display.colon = 1;
+        }
 
         delay = 250;                // software debouncing
         break;
@@ -65,7 +70,7 @@ checkPushButton(uint32_t time)
         if (sysState == Pause) {
             sysState = Run;
         }
-        if (sysState == Run) {
+        else if(sysState == Run){
             sysState = Pause;
         }
 
@@ -83,7 +88,7 @@ int main(void)
 {
     lpInit();
     seg7Init();
-    sysState = Pause;
+
     uprintf("%s\n\r", "Lab 3: Stopwatch");
 
     // Update the clock display
@@ -91,8 +96,10 @@ int main(void)
 
     // Schedule the first callback events for LED flashing and push button checking.
     // Those trigger callback chains. The time unit is millisecond.
+    sysState = Pause;
     schdCallback(stopWatchUpdate, 1000);
     schdCallback(checkPushButton, 1005);
+
 
     // Run the event scheduler to process callback events
     while (true) {
