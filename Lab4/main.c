@@ -1,6 +1,5 @@
 /*
  * ECE 266, Fall 2018, Lab 4 Buzzer
- *
  * main.c
  */
 
@@ -123,20 +122,18 @@ void checkPushButton(uint32_t time)
     schdCallback(checkPushButton, time + delay);
 }
 
-/*
- * The main function
- */
+
 int main(void)
 {
     lpInit();
     buzzerInit();
 
-    // Print out a start message
     uprintf("%s\n\r", "Lab 4 starts");
+
 
     // Schedule the first callback events
     schdCallback(buzzerPlay, 1000);
-    schdCallback(checkPushButton, 1002);
+    schdCallback(checkPushButton, 1005);
 
     // Run the callback scheduler
     while (true)
