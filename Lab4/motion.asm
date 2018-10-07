@@ -38,7 +38,7 @@ pirDetect       PUSH    {LR}
                 ;   Call GPIOPinWrite(BUZZ_PORT, BUZZ_PIN, BUZZ_PIN)
                 LDR     r0, PIR_PORT
                 MOV     r1, #PIR_PIN
-                MOV     r2, #PIR_PIN
+                ;MOV     r2, #PIR_PIN
                 BL      GPIOPinRead
                 POP     {PC}
 

@@ -94,7 +94,7 @@ void buzzerPlay(uint32_t time)
  */
 
 // If the user has activated the buzzer system or not
-static bool userActivated = false;
+bool userActivated = false;
 
 // The callback function for checking the pushbuttons
 void checkPushButton(uint32_t time)
@@ -109,12 +109,14 @@ void checkPushButton(uint32_t time)
         userActivated = true;
         buzzer.state = SwitchOn;
         delay = 250;
+        uprintf("%s\n\r", "button is on");
         break;
 
     case 2:                     // SW2: Turn off the buzzer system
         userActivated = false;
         buzzer.state = SwitchOff;
         delay = 250;
+        uprintf("%s\n\r", "button is off");
         break;
     }
 
@@ -122,11 +124,26 @@ void checkPushButton(uint32_t time)
     schdCallback(checkPushButton, time + delay);
 }
 
+///This is the code added by self for debugging purposes
+void motionSensor(uint32_t time) {
+
+    uint32_t delay;
+        if (pirDetect()) {
+            uprintf("%s\n\r", "Someone's here!");
+            delay = 10;
+        }
+        else {
+            uprintf("%s\n\r", "No ONE ");
+            delay = 10;
+        }
+    schdCallback(motionSensor, time + delay);
+}
 
 int main(void)
 {
     lpInit();
     buzzerInit();
+    pirInit();
 
     uprintf("%s\n\r", "Lab 4 starts");
 
@@ -134,6 +151,7 @@ int main(void)
     // Schedule the first callback events
     schdCallback(buzzerPlay, 1000);
     schdCallback(checkPushButton, 1005);
+    schdCallback(motionSensor, 1010);
 
     // Run the callback scheduler
     while (true)
