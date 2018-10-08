@@ -9,6 +9,7 @@
 #include "launchpad.h"
 #include "buzzer.h"
 #include "motion.h"
+#include <.led.c>
 
 // Buzzer-related constants
 #define BUZZER_CHECK_INTERVAL 10
@@ -125,21 +126,23 @@ void checkPushButton(uint32_t time)
 }
 
 
-bool motionDetected = false;
 ///This is the code added by self for debugging purposes
 void motionSensor(uint32_t time) {
 
     uint32_t delay = 10;
-        if (userActivated = true) {
+        if (userActivated == true) {
             if (pirDetect()) {
                 uprintf("%s\n\r", "motion detected");
-                motionDetected = true;
+                ledTurnOnOff(1,0,0);
                 
             }
             else {
                 uprintf("%s\n\r", "No motion ");
-                
+                ledTurnOnOff(0,0,1);
             }
+        }
+        else {
+             ledTurnOnOff(0,1,0);
         }
     schdCallback(motionSensor, time + delay);
 }
@@ -149,6 +152,7 @@ int main(void)
     lpInit();
     buzzerInit();
     pirInit();
+    ledInit();
 
     uprintf("%s\n\r", "Lab 4 starts");
 
