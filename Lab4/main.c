@@ -124,17 +124,22 @@ void checkPushButton(uint32_t time)
     schdCallback(checkPushButton, time + delay);
 }
 
+
+bool motionDetected = false;
 ///This is the code added by self for debugging purposes
 void motionSensor(uint32_t time) {
 
-    uint32_t delay;
-        if (pirDetect()) {
-            uprintf("%s\n\r", "Someone's here!");
-            delay = 10;
-        }
-        else {
-            uprintf("%s\n\r", "No ONE ");
-            delay = 10;
+    uint32_t delay = 10;
+        if (userActivated = true) {
+            if (pirDetect()) {
+                uprintf("%s\n\r", "motion detected");
+                motionDetected = true;
+                
+            }
+            else {
+                uprintf("%s\n\r", "No motion ");
+                
+            }
         }
     schdCallback(motionSensor, time + delay);
 }
