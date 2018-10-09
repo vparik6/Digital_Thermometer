@@ -9,7 +9,7 @@
 #include "launchpad.h"
 #include "buzzer.h"
 #include "motion.h"
-#include <.led.c>
+#include <led.c>
 
 // Buzzer-related constants
 #define BUZZER_CHECK_INTERVAL 10
@@ -134,11 +134,14 @@ void motionSensor(uint32_t time) {
             if (pirDetect()) {
                 uprintf("%s\n\r", "motion detected");
                 ledTurnOnOff(1,0,0);
-                
+                buzzer.state = SwitchOn;
+                delay = 2500;
             }
             else {
                 uprintf("%s\n\r", "No motion ");
                 ledTurnOnOff(0,0,1);
+                buzzer.state = SwitchOff;
+                delay = 250;
             }
         }
         else {
