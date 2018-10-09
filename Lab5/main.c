@@ -131,16 +131,45 @@ void pbIntrHandler()
     case 1:                     // SW1: Turn on the buzzer system
         userActivated = true;
         buzzer.state = SwitchOn;
+        GPIOIntEnable(GPIO_PORTC_BASE, GPIO_PIN_5);
         break;
 
     case 2:                     // SW2: Turn off the buzzer system
         userActivated = false;
         buzzer.state = SwitchOff;
+        GPIOIntDisable(GPIO_PORTC_BASE, GPIO_PIN_5);
         break;
     }
 
     // record the time to check for de-bouncing next time
     lastTime = time;
+}
+
+static volatile bool motionState = false;
+void pirIntrHandler(){
+    // IMPORTANT: Clear interrupt, otherwise the interrupt handler will be executed forever
+    GPIOIntClear(GPIO_PORTC_BASE, GPIO_PIN_5);
+
+                if (pirDetect() > 0){
+                           motionState = true;
+                           if(buzzer.state == Off){
+                               buzzer.state = SwitchOn;
+                               uprintf("%s\n\r", "Motion Detected");
+                               ledTurnOnOff(1,0,0);
+                        }
+                    }
+
+                    else {
+                            motionState = false;
+                            if(buzzer.state == On){
+                               buzzer.state = SwitchOff;
+                               uprintf("%s\n\r", "NO Motion");
+                               ledTurnOnOff(0,0,1);
+                        }
+                    }
+
+
+
 }
 
 /*
@@ -150,12 +179,20 @@ void setInterrupts()
 {
     // Set interrupt on Port F, pin 0 (SW1) and pin 4 (SW2)
     GPIOIntRegister(GPIO_PORTF_BASE, pbIntrHandler); // register the interrupt handler
+    GPIOIntRegister(GPIO_PORTC_BASE, pirIntrHandler);
+
     GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_0 | GPIO_PIN_4, // interrupt on falling edge, note that SW1 and SW2 are active low
                    GPIO_FALLING_EDGE);
-    IntPrioritySet(INT_GPIOF, 0); // set interrupt level to 0 (0 is the highest for programmable interrupts)
-    GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_0 | GPIO_PIN_4); // enable interrupts on SW1 and SW2 input
-}
+    GPIOIntTypeSet(GPIO_PORTC_BASE, GPIO_PIN_5, // interrupt on falling edge, note that SW1 and SW2 are active low
+                   GPIO_BOTH_EDGES);
 
+    IntPrioritySet(INT_GPIOF, 0); // set interrupt level to 0 (0 is the highest for programmable interrupts)
+    //IntPrioritySet(INT_GPIOC, 0);
+
+    GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_0 | GPIO_PIN_4); // enable interrupts on SW1 and SW2 input
+    GPIOIntEnable(GPIO_PORTC_BASE, GPIO_PIN_5);
+
+}
 /*
  * The main function
  */
@@ -164,6 +201,7 @@ int main(void)
     lpInit();
     buzzerInit();
     pirInit();
+    ledInit();
     setInterrupts();
 
     // Print out a start message
@@ -171,6 +209,7 @@ int main(void)
 
     // Schedule the first callback events
     schdCallback(buzzerPlay, 200);
+
 
     // Run the callback scheduler
     while (true)
