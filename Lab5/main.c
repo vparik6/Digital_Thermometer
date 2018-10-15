@@ -150,23 +150,29 @@ void pirIntrHandler(){
     // IMPORTANT: Clear interrupt, otherwise the interrupt handler will be executed forever
     GPIOIntClear(GPIO_PORTC_BASE, GPIO_PIN_5);
 
-                if (pirDetect() > 0){
-                           motionState = true;
-                           if(buzzer.state == Off){
-                               buzzer.state = SwitchOn;
-                               uprintf("%s\n\r", "Motion Detected");
-                               ledTurnOnOff(1,0,0);
-                        }
-                    }
+    if (userActivated == true) {
+        if (pirDetect() > 0){
+                   motionState = true;
+                   if(buzzer.state == Off){
+                       buzzer.state = SwitchOn;
+                       uprintf("%s\n\r", "Motion Detected");
+                       ledTurnOnOff(1,0,0);
+                }
+            }
 
-                    else {
-                            motionState = false;
-                            if(buzzer.state == On){
-                               buzzer.state = SwitchOff;
-                               uprintf("%s\n\r", "NO Motion");
-                               ledTurnOnOff(0,0,1);
-                        }
-                    }
+            else {
+                    motionState = false;
+                    if(buzzer.state == On){
+                       buzzer.state = SwitchOff;
+                       uprintf("%s\n\r", "NO Motion");
+                       ledTurnOnOff(0,0,1);
+                }
+            }
+            }
+    else {
+        ledTurnOnOff(0,0,0);
+        buzzer.state = SwitchOff;
+    }
 
 
 
