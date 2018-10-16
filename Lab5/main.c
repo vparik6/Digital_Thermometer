@@ -15,6 +15,7 @@
 #include "launchpad.h"
 #include "buzzer.h"
 #include "motion.h"
+#include <led.c>
 
 // Buzzer-related constants
 #define BUZZER_CHECK_INTERVAL 30
@@ -138,6 +139,7 @@ void pbIntrHandler()
         userActivated = false;
         buzzer.state = SwitchOff;
         GPIOIntDisable(GPIO_PORTC_BASE, GPIO_PIN_5);
+        ledTurnOnOff(0,0,0);
         break;
     }
 
@@ -150,33 +152,25 @@ void pirIntrHandler(){
     // IMPORTANT: Clear interrupt, otherwise the interrupt handler will be executed forever
     GPIOIntClear(GPIO_PORTC_BASE, GPIO_PIN_5);
 
-    if (userActivated == true) {
-        if (pirDetect() > 0){
-                   motionState = true;
-                   if(buzzer.state == Off){
-                       buzzer.state = SwitchOn;
-                       uprintf("%s\n\r", "Motion Detected");
-                       ledTurnOnOff(1,0,0);
-                }
-            }
+           if (pirDetect() > 0){
+               motionState = true;
+                 if(buzzer.state == Off){
+                    buzzer.state = SwitchOn;
+                    uprintf("%s\n\r", "Motion Detected");
+                    ledTurnOnOff(1,0,0);
+                   }
+               }
 
-            else {
-                    motionState = false;
-                    if(buzzer.state == On){
-                       buzzer.state = SwitchOff;
-                       uprintf("%s\n\r", "NO Motion");
-                       ledTurnOnOff(0,0,1);
-                }
-            }
-            }
-    else {
-        ledTurnOnOff(0,0,0);
-        buzzer.state = SwitchOff;
-    }
+           else {
+               motionState = false;
+                  if(buzzer.state == On){
+                     buzzer.state = SwitchOff;
+                     uprintf("%s\n\r", "NO Motion");
+                     ledTurnOnOff(0,0,1);
+                    }
+                 }
+ }
 
-
-
-}
 
 /*
  * Select a set of interrupts that can wake up the LaunchPad
