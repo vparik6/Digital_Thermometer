@@ -8,6 +8,8 @@
 #ifndef ROTARY_H_
 #define ROTARY_H_
 
+void adcInit();
+uint16_t adcVal();
 
 
 #endif /* ROTARY_H_ */
