@@ -33,8 +33,8 @@ while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)) {
 // Enable the first sample sequencer to capture the value of channel 0 when the processor trigger occurs.
 //
 ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
-ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH2);
-//ADCSequenceStepConfigure(ADC0_BASE, 0, 1, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH4);
+//ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH0);
+ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH2);
 ADCSequenceEnable(ADC0_BASE, 0);
 }
 
