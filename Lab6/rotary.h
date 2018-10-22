@@ -9,7 +9,7 @@
 #define ROTARY_H_
 
 void adcInit();
-uint16_t adcVal();
+uint16_t adcRead();
 
 
 #endif /* ROTARY_H_ */

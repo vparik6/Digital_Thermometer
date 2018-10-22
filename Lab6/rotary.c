@@ -33,12 +33,12 @@ while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)) {
 // Enable the first sample sequencer to capture the value of channel 0 when the processor trigger occurs.
 //
 ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
-ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH0);
+ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH2);
 //ADCSequenceStepConfigure(ADC0_BASE, 0, 1, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH4);
 ADCSequenceEnable(ADC0_BASE, 0);
 }
 
-uint16_t adcVal() {
+uint16_t adcRead() {
     
     
 uint32_t ui32Value;
@@ -56,7 +56,8 @@ while(!ADCIntStatus(ADC0_BASE, 0, false))
 // Read the value from the ADC.
 //
 ADCSequenceDataGet(ADC0_BASE, 0, &ui32Value);
-//ADCIntClear(ACD0_BASE, 0); // This line might need to go somewhere else
-return ui32Value;
+
+ADCIntClear(ADC0_BASE, 0);
+return (uint16_t) ui32Value;
 
 }

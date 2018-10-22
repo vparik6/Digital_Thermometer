@@ -17,6 +17,7 @@
 #include <driverlib/adc.h>
 #include <math.h>
 
+uint32_t Data[2];
 int degrees;
 
 // The running state of the stopwatch system
@@ -33,7 +34,7 @@ modedisplay(uint32_t time)
 {
     if (sysState == Percentile)
     {
-        degrees = adcVal();
+        degrees = adcRead(Data);
         degrees = degrees*100/4095;
 
         seg7Display.d4 = 10;
@@ -53,7 +54,7 @@ modedisplay(uint32_t time)
 }
     else if (sysState == Raw){
 
-        degrees = adcVal();
+        degrees = adcRead(Data);
 
 
         seg7Display.d1 = degrees % 10;
@@ -112,7 +113,7 @@ int main(void)
     seg7Init();
     adcInit();
 
-    uprintf("%d\n\r", adcVal());
+    //uprintf("%d\n\r", adcRead());
     uprintf("%s\n\r", "Lab 6: ADC");
 
 
