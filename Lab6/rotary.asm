@@ -15,7 +15,8 @@ adcInit			PUSH 	{LR}
                 ;   Call ADCSequenceConfigure(ADC0_BASE, 0 /* sequencer #0 */, ADC_TRIGGER_PROCESSOR, 0 /* priority */);
                 LDR   r0, ADC_PORT
                 MOV   r1, #0
-                LDR   r2, ADC_TRIGGER
+                ;LDR   r2, ADC_TRIGGER
+                MOV   r2, #ADC_TRIGGER_PROCESSOR
                 MOV   r3, #0
                 BL    ADCSequenceConfigure
 
