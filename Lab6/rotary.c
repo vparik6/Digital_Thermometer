@@ -17,10 +17,8 @@
 
 
 
-void adcInit()
-{
+void adcInit(){
     //Enables ADC0 module
-
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
 
     //Wait for the ADC0 module to be ready
@@ -35,11 +33,10 @@ void adcInit()
 
 
     //This part of the code is identical to the one above, except now we are using the second adc module avaible on the tiva-c board
-    //Enables ADC0 module
-
+    //Enables ADC1 module
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC1);
 
-    //Wait for the ADC0 module to be ready
+    //Wait for the ADC1 module to be ready
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC1)){
 
     }
@@ -49,29 +46,26 @@ void adcInit()
     ADCSequenceEnable(ADC1_BASE, 0);
     ADCSequenceStepConfigure(ADC1_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH4);
 
-
 }
 
-uint16_t adcVal(){
+uint32_t adcVal(){
 
     uint32_t ui32value;
 
     //Trigger the sample sequence.
-
     ADCProcessorTrigger(ADC0_BASE, 0);
 
     //Wait until sample sequence is complete
-
     while(!ADCIntStatus(ADC0_BASE, 0, false)){
     }
     //Read value from ADC
     ADCSequenceDataGet(ADC0_BASE, 0 , &ui32value);
     ADCIntClear(ADC0_BASE,0);
-    return (uint16_t) ui32value;
-
+    return (uint32_t)ui32value;
 
 }
-uint16_t adcVal2(){
+
+uint32_t adcVal2(){
 
     uint32_t ui32value;
 
@@ -84,7 +78,7 @@ uint16_t adcVal2(){
     //Read value from ADC
     ADCSequenceDataGet(ADC1_BASE, 0, &ui32value);
     ADCIntClear(ADC1_BASE,0);
-    return (uint16_t) ui32value;
-
-
+    return (uint32_t)ui32value;
 }
+
+
