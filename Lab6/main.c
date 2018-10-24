@@ -24,7 +24,7 @@ seg7Display_t seg7Display = {0, 0, 0, 0, 0};
 void displayValuesR(uint32_t time) {
 int degrees = 0;
     degrees = adcVal();
-    degrees = degrees*100/4096;
+    degrees = 99-degrees*100/4096;
 
         seg7Display.d1 = degrees % 10;
 
@@ -42,7 +42,7 @@ int degrees = 0;
 void displayValuesL(uint32_t time) {
 int degrees2 = 0;
     degrees2 = adcVal2();
-    degrees2 = degrees2*100/4096;
+    degrees2 = 99-degrees2*100/4096;
 
          seg7Display.d3 = degrees2 % 10;
 
