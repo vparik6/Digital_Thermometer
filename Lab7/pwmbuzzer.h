@@ -4,8 +4,8 @@
  *  Created by Zhao Zhang
  */
 
-#ifndef PWMLED_H_
-#define PWMLED_H_
+#ifndef PWMBUZZER_H_
+#define PWMBUZZER_H_
 
 #include <stdint.h>
 
@@ -18,11 +18,7 @@ typedef struct {
 /*
  * Initialize the timer PWM functions connected to the three sub-LEDs.
  */
-void BuzzerInit();
+void buzzerInit();
+void buzzerPwmSet(pwm_t buzzer);
 
-/*
- * Set the LED parameters for the three sub-LEDs
- */
-void BuzzerPwmSet(pwm_t red, pwm_t green, pwm_t blue);
-
-#endif /* PWDLED_H_ */
+#endif /* PWDBUZZER_H_ */
