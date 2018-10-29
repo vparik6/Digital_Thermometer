@@ -10,7 +10,7 @@
 #include "launchpad.h"
 #include "rotary.h"
 #include "pwmled.h"
-//#include "pwmbuzzer.h"
+#include "pwmbuzzer.h"
 
 // LED-related constant
 #define LED_PWM_PERIOD          5000
