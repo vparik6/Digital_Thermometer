@@ -13,12 +13,12 @@
 typedef struct {
     uint16_t pulseWidth;       // PWM pulse width
     uint16_t period;            // PWM period in cycles
-} pwm_t;
+}pwm_b;
 
 /*
  * Initialize the timer PWM functions connected to the three sub-LEDs.
  */
 void buzzerInit();
-void buzzerPwmSet(pwm_t buzzer);
+void buzzerPwmSet(pwm_b buzzer);
 
 #endif /* PWDBUZZER_H_ */

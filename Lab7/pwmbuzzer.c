@@ -6,6 +6,7 @@
 #include <driverlib/pin_map.h>
 #include <driverlib/timer.h>
 #include "pwmled.h"
+#include "pwmbuzzer.h"
 
 #define TIMER0          TIMER0_BASE
 #define PORTC           GPIO_PORTC_BASE
@@ -42,13 +43,13 @@ void buzzerInit()
     TimerMatchSet(TIMER0, TIMER_A, 200);
     // Enable the Timer 0's TimerB and Timer 1's TimerA and TimerB
     TimerEnable(TIMER0, TIMER_A);
-//    TimerEnable(TIMER1, TIMER_A | TIMER_B);
+
 }
 
 /*
  *  Set the LED parameters for the three sub-LEDs
  */
-void buzzerPwmSet(pwm_t buzzer)
+void buzzerPwmSet(pwm_b buzzer)
 {
     // Set the period and duty cycle length for the read sub-LED
     TimerLoadSet(TIMER0, TIMER_A, buzzer.period);
