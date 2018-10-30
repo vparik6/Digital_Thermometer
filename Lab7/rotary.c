@@ -2,7 +2,7 @@
  * rotary.c
  *
  *  Created on: Oct 16, 2018
- *      Author: jniero2
+ *
  */
 
 #include <stdint.h>
@@ -55,8 +55,9 @@ void adcVal(uint32_t data[]){
     while(!ADCIntStatus(ADC0_BASE, 0, false)){
     }
     //Read value from ADC
-    ADCSequenceDataGet(ADC0_BASE, 0 , data);
     ADCIntClear(ADC0_BASE,0);
+    ADCSequenceDataGet(ADC0_BASE, 0 , data);
+
 
 }
 

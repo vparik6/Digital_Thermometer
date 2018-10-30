@@ -71,13 +71,13 @@ void checkAdc(uint32_t time) {
 
     adcVal(data);
 
-    uint32_t left = 99 - data[0]*100/4096;
-    uint32_t right = 99 - data[1]*100/4096;
+    uint32_t left = 100 - data[0]*100/4096;
+    uint32_t right = 100 - data[1]*100/4096;
 
     led.maxPulseWidth = LED_MAX_PULSE_WIDTH * left/99;
 
     buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
-    buzzer.pwmPeriod = BUZZER_MIN_PERIOD + (BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
+    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
 
     schdCallback(checkAdc, time + 100);
 }
@@ -87,9 +87,6 @@ void ledPlay(uint32_t time)
 {
     static unsigned int angle = 0; // the degree of angle, used for calculating sine value
     int delay = 5;                    // the callback delay
-    //int degrees = 0;
-//       degrees = 4095 - adcVal();
-    // led.maxPulseWidth = adcVal() / 100;
 
     // Calculate PWM parameters for red, blue, and green sub-LEDs using sine function.
     // Use phase shift of 60, 30, and 0 degrees for red, blue, and green
@@ -108,9 +105,6 @@ void ledPlay(uint32_t time)
     // Schedule the next callback
     schdCallback(ledPlay, time + delay);
 }
-//int period;
-//int pulse;
-
 
 
 void buzzerPlay(uint32_t time)
@@ -150,7 +144,7 @@ void buzzerPlay(uint32_t time)
 
     case SwitchOff:             // De-activate the buzzer system
         if (buzzer.buzzing)
-            buzzerPwmSet(0, buzzer.pwmPeriod);
+        buzzerPwmSet(0, buzzer.pwmPeriod);
         buzzer.state = Off;
         buzzer.buzzing = Off;
         break;
@@ -179,9 +173,9 @@ void main(void)
 
     // Schedule the first callback events for LED flashing and push button checking.
     // Those trigger callback chains. The time unit is millisecond.
-    schdCallback(ledPlay, 1002);
+    schdCallback(ledPlay, 1005);
     schdCallback(buzzerPlay, 1000);
-    schdCallback(checkAdc, 999);
+    schdCallback(checkAdc, 995);
 
     // Loop forever
     while (true)
