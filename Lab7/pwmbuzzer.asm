@@ -3,7 +3,7 @@
 ; Created by Zhao Zhang
 
 ; Include C header files
-                .cdecls "stdint.h","stdbool.h","inc/hw_memmap.h","driverlib/sysctl.h","driverlib/gpio.h","driverlib/pin_map.h","driverlib/timer.h","pwmled.h"
+                .cdecls "stdint.h","stdbool.h","inc/hw_memmap.h","driverlib/sysctl.h","driverlib/gpio.h","driverlib/pin_map.h","driverlib/timer.h","pwmbuzzer.h"
 
                 .text
 
@@ -18,7 +18,6 @@ PIN_ROUTE_4     .field  PIO_PC4_WT0CCP0
 
                 .asmfunc
 buzzerInit      PUSH    {lr}
-
 
                 LDR     r0, TIMER0_PERIPH
                 BL      SysCtlPeripheralEnable
@@ -58,13 +57,9 @@ buzzerInit      PUSH    {lr}
                 POP     {pc}
                 .endasmfunc
 
-;
-; void pwmledSetColor(pwm_t red, pwm_t blue, pwm_t green)
-;
-; Set color of the on-board LED by setting the intensity of the primary colors
-;
+
                 .asmfunc
-BuzzerPwmSet       PUSH    {r0}            ; Push r0, r1 and r2 for later function calls
+buzzerPwmSet       PUSH    {r0}            ; Push r0, r1 and r2 for later function calls
 
                 ; Set the period and duty cycle length for the read sub-LED
                 ;   call TimerLoadSet(TIMER0, TIMER_A, red.period)
@@ -84,7 +79,6 @@ BuzzerPwmSet       PUSH    {r0}            ; Push r0, r1 and r2 for later functi
                 ; Set the period and duty cycle length for the read sub-LED
                 ;   call TimerLoadSet(TIMER1, TIMER_A, blue.period)
                 ;   call TimerMatchSet(TIMER1, TIMER_A, blue.pulse_width)
-
 
                 ADD     sp, #12                     ; release the stack space for r2, r1, r0
                 POP     {pc}

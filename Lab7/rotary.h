@@ -10,7 +10,6 @@
 
 
 void adcInit();
-uint32_t adcVal();
-uint32_t adcVal2();
+void adcVal(uint32_t data[]);
 
 #endif /* ROTARY_H_ */
