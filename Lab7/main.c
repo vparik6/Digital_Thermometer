@@ -41,51 +41,55 @@ void ledPlay(uint32_t time)
 {
     static unsigned int angle = 0; // the degree of angle, used for calculating sine value
     int delay = 5;                    // the callback delay
-   int degrees = 0;
-       degrees = adcVal();
+    int degrees = 0;
+       degrees = 4095 - adcVal();
 
     // Calculate PWM parameters for red, blue, and green sub-LEDs using sine function.
     // Use phase shift of 60, 30, and 0 degrees for red, blue, and green
     pwm_t red, blue, green;
 
-     if(degrees >= 0 && degrees < 800){
-            led.maxPulseWidth = 40;
+     if(degrees >= 0 && degrees < 600){
+            led.maxPulseWidth = 0;
             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
             green.pulseWidth = sine(angle) * led.maxPulseWidth;
             red.period = green.period = blue.period = led.pwmPeriod;
        }
-
-     if(degrees > 800 && degrees <= 1600){
+     if(degrees > 600 && degrees <= 1200){
              led.maxPulseWidth = 40;
-             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth + 100;
-             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth + 100;
-             green.pulseWidth = sine(angle) * led.maxPulseWidth + 100;
+             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
+             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
+             green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
-
-     if(degrees > 1600 && degrees <= 2400){
-             led.maxPulseWidth = 40;
-             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth + 200;
-             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth + 200;
-             green.pulseWidth = sine(angle) * led.maxPulseWidth + 200;
+     if(degrees > 1200 && degrees <= 1800){
+             led.maxPulseWidth = 80;
+             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
+             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
+             green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
-
-     if(degrees > 2400 && degrees <= 3200){
-              led.maxPulseWidth = 40;
-              red.pulseWidth = sine(angle + 60) * led.maxPulseWidth + 300;
-              blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth + 300;
-              green.pulseWidth = sine(angle) * led.maxPulseWidth + 300;
-              red.period = green.period = blue.period = led.pwmPeriod;
-        }
-     if(degrees > 3200 && degrees <= 4096){
-               led.maxPulseWidth = 40;
-               red.pulseWidth = sine(angle + 60) * led.maxPulseWidth + 400;
-               blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth + 400;
-               green.pulseWidth = sine(angle) * led.maxPulseWidth + 400;
-               red.period = green.period = blue.period = led.pwmPeriod;
-        }
+     if(degrees > 1800 && degrees <= 2400){
+             led.maxPulseWidth = 120;
+             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
+             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
+             green.pulseWidth = sine(angle) * led.maxPulseWidth;
+             red.period = green.period = blue.period = led.pwmPeriod;
+       }
+     if(degrees > 2400 && degrees <= 3000){
+             led.maxPulseWidth = 160;
+             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
+             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
+             green.pulseWidth = sine(angle) * led.maxPulseWidth;
+             red.period = green.period = blue.period = led.pwmPeriod;
+       }
+     if(degrees > 3600 && degrees <= 4095){
+            led.maxPulseWidth = 200;
+            red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
+            blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
+            green.pulseWidth = sine(angle) * led.maxPulseWidth;
+            red.period = green.period = blue.period = led.pwmPeriod;
+       }
 
     // Set the PWM parameters for LED
     ledPwmSet(red, blue, green);

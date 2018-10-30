@@ -5,7 +5,7 @@
 #include <driverlib/gpio.h>
 #include <driverlib/pin_map.h>
 #include <driverlib/timer.h>
-#include "pwmled.h"
+#include "pwmbuzzer.h"
 
 #define TIMER0          TIMER0_BASE
 #define PORTC           GPIO_PORTC_BASE
@@ -28,14 +28,12 @@ void buzzerInit()
 
     // Select PWM for Timer 0 sub-Timer B, and Timer 1 sub-Timers A & B
     TimerConfigure(TIMER0, (TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PWM));
-//    TimerConfigure(TIMER1,
-//                   (TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PWM | TIMER_CFG_B_PWM));
-
+    // TimerConfigure(TIMER1, (TIMER_CFG_SPLIT_PAIR | TIMER_CFG_A_PWM | TIMER_CFG_B_PWM));
     // Invert the PWM waveform, so that the Match register value is the pulse width.
     // Otherwise, the pulse width will be (Load value) - (Match value).
     // The inversion is done by enabling output inversion on the PWM pins.
-    TimerControlLevel(TIMER0, TIMER_A, true /* output inversion */);
-//    TimerControlLevel(TIMER1, TIMER_BOTH, true /* output inversion */);
+    //TimerControlLevel(TIMER0, TIMER_A, true /* output inversion */);
+    // TimerControlLevel(TIMER1, TIMER_BOTH, true /* output inversion */);
 
     // Turn off the LEDs initially
     TimerLoadSet(TIMER0, TIMER_A, 200);
@@ -48,7 +46,7 @@ void buzzerInit()
 /*
  *  Set the LED parameters for the three sub-LEDs
  */
-void buzzerPwmSet(pwm_t buzzer)
+void buzzerPwmSet(pwmbz_t buzzer)
 {
     // Set the period and duty cycle length for the read sub-LED
     TimerLoadSet(TIMER0, TIMER_A, buzzer.period);
