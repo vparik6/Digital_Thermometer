@@ -56,35 +56,35 @@ void ledPlay(uint32_t time)
             red.period = green.period = blue.period = led.pwmPeriod;
        }
      if(degrees > 600 && degrees <= 1200){
-             led.maxPulseWidth = 40;
+             led.maxPulseWidth = 50;
              red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
              blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
              green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
      if(degrees > 1200 && degrees <= 1800){
-             led.maxPulseWidth = 80;
+             led.maxPulseWidth = 100;
              red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
              blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
              green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
      if(degrees > 1800 && degrees <= 2400){
-             led.maxPulseWidth = 120;
+             led.maxPulseWidth = 150;
              red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
              blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
              green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
      if(degrees > 2400 && degrees <= 3000){
-             led.maxPulseWidth = 160;
+             led.maxPulseWidth = 200;
              red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
              blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
              green.pulseWidth = sine(angle) * led.maxPulseWidth;
              red.period = green.period = blue.period = led.pwmPeriod;
        }
      if(degrees > 3600 && degrees <= 4095){
-            led.maxPulseWidth = 200;
+            led.maxPulseWidth = 250;
             red.pulseWidth = sine(angle + 60) * led.maxPulseWidth;
             blue.pulseWidth = sine(angle + 30) * led.maxPulseWidth;
             green.pulseWidth = sine(angle) * led.maxPulseWidth;
