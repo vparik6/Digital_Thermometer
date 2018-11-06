@@ -11,6 +11,7 @@
 #include <stdint.h>
 
 void rangerInit();
-void sendStartPulse();
+static void sendStartPulse();
 uint32_t rangerDetect();
+
 #endif /* RANGER_H_ */

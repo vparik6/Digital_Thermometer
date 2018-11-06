@@ -27,13 +27,13 @@ void rangerInit(){
     TimerEnable(TIMER3, TIMER_B);
 }
 
-void sendStartPulse() {
+static void sendStartPulse() {
     //all good
     GPIOPinConfigure(PORTB);
     GPIOPinWrite(PORTB, GPIO_PIN_3, 0);
-    waitUs(2000);
+    waitUs(2);
     GPIOPinWrite(PORTB, GPIO_PIN_3, GPIO_PIN_3);
-    waitUs(5000);
+    waitUs(5);
     GPIOPinWrite(PORTB, GPIO_PIN_3, 0);
 
 }
@@ -54,12 +54,14 @@ uint32_t rangerDetect() {
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);}
 
      val1 = TimerValueGet(TIMER3, TIMER_B);
+     uprintf("%d\n", val1);
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
      while(!TimerIntStatus(TIMER3_BASE, false)){
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);}
 
      val2 = TimerValueGet(TIMER3, TIMER_B);
+     uprintf("%d\n", val2);
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 

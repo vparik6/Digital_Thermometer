@@ -3,7 +3,7 @@
  *
  * Created by Zhao Zhang
  */
-
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <math.h>
@@ -40,20 +40,16 @@ typedef struct{
         Off, On, SwitchOff, SwitchOn
     } state;            // the running state of the buzzer system
     bool buzzing;       // if the buzzer is buzzing
-    int32_t timeLeft;   // the time left for the buzzer to buzz or not buzz
+    uint32_t timeLeft;   // the time left for the buzzer to buzz or not buzz
     int pwmPulseWidth;
     int pwmPeriod;
 } buzzer_t;
 
 static volatile buzzer_t buzzer = { On, false, 0, BUZZER_MAX_PERIOD, 0 };
 
-void buzzerPlay(uint32_t time)
-{
+void buzzerPlay(uint32_t time){
     uint32_t delay = BUZZER_CHECK_INTERVAL;     // the delay for next callback
 
-
-   // buzzer.pwmPeriod = adcVal2() / 100;
-    //buzzer.pwmPulseWidth = adcVal() / 100;
     switch (buzzer.state)
     {
     case Off:           // the buzzer system is turned off, do nothing
@@ -102,19 +98,23 @@ void buzzerPlay(uint32_t time)
 }
 
 void checkRange(uint32_t xDistance){
+
     xDistance = rangerDetect();
 
+    uprintf("%d\n", xDistance);
 
+    schdCallback(checkRange, 100);
 }
 
 void main(void){
+
+    uprintf("uegasyfg");
     lpInit();
     buzzerInit();
     rangerInit();
 
-    uprintf("%d\n", rangerDetect());
-
     schdCallback(buzzerPlay, 1000);
+    schdCallback(checkRange, 1005);
 
     while (true)
     {
