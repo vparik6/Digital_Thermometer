@@ -8,9 +8,8 @@
 #include <stdbool.h>
 #include <math.h>
 #include "launchpad.h"
-//#include "rotary.h"
-//#include "pwmled.h"
 #include "pwmbuzzer.h"
+#include "ranger.h"
 
 
 // Buzzer-related constants
@@ -47,19 +46,6 @@ typedef struct{
 } buzzer_t;
 
 static volatile buzzer_t buzzer = { On, false, 0, BUZZER_MAX_PERIOD, 0 };
-/*
- * Task 1: Play a sine pattern on LED
- */
-
-// a sine function that uses degree as input
-static inline double sine(unsigned int degree)
-{
-    double radian = 2 * M_PI * ((double) (degree % 360) / 360);
-    return sin(radian);
-}
-
-
-
 
 void buzzerPlay(uint32_t time)
 {
@@ -115,23 +101,21 @@ void buzzerPlay(uint32_t time)
     schdCallback(buzzerPlay, time + delay);
 }
 
+void checkRange(uint32_t xDistance){
+    xDistance = rangerDetect();
 
 
-void main(void)
+}
 
-{
+void main(void){
     lpInit();
-//    ledPwmInit();
-//    adcInit();
     buzzerInit();
+    rangerInit();
 
-    // Schedule the first callback events for LED flashing and push button checking.
-    // Those trigger callback chains. The time unit is millisecond.
-//    schdCallback(ledPlay, 1005);
+    uprintf("%d\n", rangerDetect());
+
     schdCallback(buzzerPlay, 1000);
-//    schdCallback(checkAdc, 995);
 
-    // Loop forever
     while (true)
     {
         schdExecute();
