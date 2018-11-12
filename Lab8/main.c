@@ -7,13 +7,13 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdbool.h>
-#include <inc/hw_memmap.h>
-#include <inc/hw_ints.h>
-#include <driverlib/gpio.h>
-#include <driverlib/pin_map.h>
-#include <driverlib/sysctl.h>
-#include <driverlib/interrupt.h>
-#include <driverlib/systick.h>
+//#include <inc/hw_memmap.h>
+//#include <inc/hw_ints.h>
+//#include <driverlib/gpio.h>
+//#include <driverlib/pin_map.h>
+//#include <driverlib/sysctl.h>
+//#include <driverlib/interrupt.h>
+//#include <driverlib/systick.h>
 
 #include <math.h>
 #include "launchpad.h"
@@ -118,14 +118,14 @@ void checkPushButton(uint32_t time)
     {
     case 1:                     // SW1: Turn on the buzzer system
         userActivated = true;
-//        buzzer.state = SwitchOn;
+        buzzer.state = SwitchOn;
         delay = 250;
         uprintf("%s\n\r", "button is on");
         break;
 
     case 2:                     // SW2: Turn off the buzzer system
         userActivated = false;
-//        buzzer.state = SwitchOff;
+        buzzer.state = SwitchOff;
         delay = 250;
         uprintf("%s\n\r", "button is off");
         break;
@@ -147,7 +147,7 @@ void checkRange(uint32_t time){
     schdCallback(checkRange, time + delay);
 }
 
-void main(){
+void main(void){
 
     uprintf("%s\n\r", "Hello World");
     lpInit();
