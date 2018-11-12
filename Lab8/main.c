@@ -149,7 +149,7 @@ void checkRange(uint32_t time){
 
 void main(){
 
-    //uprintf("%s\n\r", "Hello World");
+    uprintf("%s\n\r", "Hello World");
     lpInit();
     buzzerInit();
     ledInit();
