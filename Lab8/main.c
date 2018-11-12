@@ -147,9 +147,9 @@ void checkRange(uint32_t time){
     schdCallback(checkRange, time + delay);
 }
 
-void main(void){
+void main(){
 
-    uprintf("%s\n\r", "Hello World");
+    //uprintf("%s\n\r", "Hello World");
     lpInit();
     buzzerInit();
     ledInit();
