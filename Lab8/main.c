@@ -1,15 +1,25 @@
 /*
- * mail.c: Starter code for Lab 7, Fall 2018
+ * main.c: Starter code for Lab 7, Fall 2018
  *
  * Created by Zhao Zhang
  */
 #include <stdio.h>
+#include <assert.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <inc/hw_memmap.h>
+#include <inc/hw_ints.h>
+#include <driverlib/gpio.h>
+#include <driverlib/pin_map.h>
+#include <driverlib/sysctl.h>
+#include <driverlib/interrupt.h>
+#include <driverlib/systick.h>
+
 #include <math.h>
 #include "launchpad.h"
 #include "pwmbuzzer.h"
 #include "ranger.h"
+#include <led.c>
 
 
 // Buzzer-related constants
@@ -97,25 +107,26 @@ void buzzerPlay(uint32_t time){
     schdCallback(buzzerPlay, time + delay);
 }
 
-void checkRange(uint32_t xDistance){
 
-    xDistance = rangerDetect();
+void checkRange(uint32_t time){
+    uint32_t delay = 100;
+    int xDistance = rangerDetect();
 
-    uprintf("%d\n", xDistance);
+    printf("%s\n\r", xDistance);
 
-    schdCallback(checkRange, 100);
+    schdCallback(checkRange, time + delay);
 }
 
-void main(void){
+void main(){
 
-    uprintf("uegasyfg");
+    printf("%s\n\r", "Hello World");
     lpInit();
     buzzerInit();
     rangerInit();
 
     schdCallback(buzzerPlay, 1000);
     schdCallback(checkRange, 1005);
-
+    printf("%s\n\r", rangerDetect());
     while (true)
     {
         schdExecute();
