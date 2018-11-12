@@ -144,8 +144,8 @@ void checkRange(uint32_t time){
         ledTurnOnOff(1,0,0);
         buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH;
         buzzer.pwmPeriod = BUZZER_MAX_PERIOD;
-        int distance = rangerDetect();
-        uprintf("%s\n\r", distance);
+        uint32_t distance = rangerDetect();
+        uprintf("%u\n\r", distance);
     }
     else {
         ledTurnOnOff(0,0,0);
