@@ -107,26 +107,58 @@ void buzzerPlay(uint32_t time){
     schdCallback(buzzerPlay, time + delay);
 }
 
+bool userActivated = false;
+
+// The callback function for checking the pushbuttons
+void checkPushButton(uint32_t time)
+{
+    uint32_t delay = 10;        // the default delay for the next checking
+    int code = pbRead();        // read the pushbutton
+    switch (code)
+    {
+    case 1:                     // SW1: Turn on the buzzer system
+        userActivated = true;
+//        buzzer.state = SwitchOn;
+        delay = 250;
+        uprintf("%s\n\r", "button is on");
+        break;
+
+    case 2:                     // SW2: Turn off the buzzer system
+        userActivated = false;
+//        buzzer.state = SwitchOff;
+        delay = 250;
+        uprintf("%s\n\r", "button is off");
+        break;
+    }
+
+    // schedule the next callback
+    schdCallback(checkPushButton, time + delay);
+}
+
+
+
 
 void checkRange(uint32_t time){
     uint32_t delay = 100;
     int xDistance = rangerDetect();
 
-    printf("%s\n\r", xDistance);
+    uprintf("%s\n\r", xDistance);
 
     schdCallback(checkRange, time + delay);
 }
 
 void main(){
 
-    printf("%s\n\r", "Hello World");
+    uprintf("%s\n\r", "Hello World");
     lpInit();
     buzzerInit();
+    ledInit();
     rangerInit();
 
-    schdCallback(buzzerPlay, 1000);
-    schdCallback(checkRange, 1005);
-    printf("%s\n\r", rangerDetect());
+    schdCallback(checkPushButton, 1000);
+    schdCallback(buzzerPlay, 1005);
+    schdCallback(checkRange, 1010);
+    uprintf("%s\n\r", rangerDetect());
     while (true)
     {
         schdExecute();

@@ -61,7 +61,7 @@ uint32_t rangerDetect() {
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
      while(!TimerIntStatus(TIMER3_BASE, false)){
      }
-     val2 = TimerValueGet(TIMER3, TIMER_B);
+     val2 = TimerValueGet(TIMER3_BASE, TIMER_B);
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
 
