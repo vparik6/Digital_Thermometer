@@ -140,17 +140,24 @@ void checkPushButton(uint32_t time)
 
 void checkRange(uint32_t time){
     uint32_t delay = 100;
-    int xDistance = rangerDetect();
-
-    uprintf("%s\n\r", xDistance);
+    if (userActivated == true) {
+        ledTurnOnOff(1,0,0);
+        buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH;
+        buzzer.pwmPeriod = BUZZER_MAX_PERIOD;
+        int distance = rangerDetect();
+        uprintf("%s\n\r", distance);
+    }
+    else {
+        ledTurnOnOff(0,0,0);
+    }
 
     schdCallback(checkRange, time + delay);
 }
 
 void main(){
-
-    uprintf("%s\n\r", "Hello World");
     lpInit();
+    uprintf("%s\n\r", "Hello World");
+
     buzzerInit();
     ledInit();
     rangerInit();
@@ -158,7 +165,7 @@ void main(){
     schdCallback(checkPushButton, 1000);
     schdCallback(buzzerPlay, 1005);
     schdCallback(checkRange, 1010);
-    uprintf("%s\n\r", rangerDetect());
+//    uprintf("%s\n\r", rangerDetect());
     while (true)
     {
         schdExecute();

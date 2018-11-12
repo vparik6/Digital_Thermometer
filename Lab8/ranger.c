@@ -50,18 +50,20 @@ uint32_t rangerDetect() {
      GPIOPinConfigure(GPIO_PB3_T3CCP1);
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-     while(!TimerIntStatus(TIMER3_BASE, false)){
-     }
+     while(TimerIntStatus(TIMER3_BASE, false)){
 
+     }
      val1 = TimerValueGet(TIMER3_BASE, TIMER_B);
+
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
 //     uprintf("%d\n\r", "Val 1 is");
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-     while(!TimerIntStatus(TIMER3_BASE, false)){
+     while(TimerIntStatus(TIMER3_BASE, false)){
      }
      val2 = TimerValueGet(TIMER3_BASE, TIMER_B);
+
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
 
