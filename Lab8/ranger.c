@@ -71,7 +71,7 @@ uint32_t rangerDetect() {
 
     // TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
-     distance =  (val2-val1)*170/50000;
+     distance =  (val2-val1)*170/50000; // this result gives us distance in millimeters. 100mm = 10 cm
      uprintf("distance is %u\n\r", distance);
      return distance;
 }

@@ -27,7 +27,7 @@
 #define LED_MAX_PULSE_WIDTH 5000
 
 #define BUZZER_CHECK_INTERVAL 10
-#define BUZZER_ON_TIME  30
+#define BUZZER_ON_TIME  200
 #define BUZZER_OFF_TIME (3000 - BUZZER_ON_TIME)
 #define BUZZER_MAX_PERIOD ((uint32_t) (50000000 / 261.63))
 #define BUZZER_MAX_PULSE_WIDTH 50000
@@ -140,10 +140,38 @@ void checkRange(uint32_t time){
     uint32_t delay = 100;
     if (userActivated == true) {
         ledTurnOnOff(1,0,0);
-        buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH;
-        buzzer.pwmPeriod = BUZZER_MAX_PERIOD;
         uint32_t distance = rangerDetect();
-        //uprintf("%u\n\r", distance);
+
+        if (distance >= 800 && distance <= 1000) {
+            buzzer.timeLeft = 80;
+            buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .8;
+            buzzer.pwmPeriod = BUZZER_MIN_PERIOD * .2 + BUZZER_MIN_PERIOD;
+        }
+        if (distance >= 600 && distance < 800) {
+            buzzer.timeLeft = 75;
+            buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .6;
+            buzzer.pwmPeriod = BUZZER_MIN_PERIOD * .4 + BUZZER_MIN_PERIOD;
+        }
+        if (distance >= 400 && distance < 600) {
+            buzzer.timeLeft = 70;
+            buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .4;
+            buzzer.pwmPeriod = BUZZER_MIN_PERIOD * .6 + BUZZER_MIN_PERIOD;
+        }
+        if (distance >= 200 && distance < 400) {
+            buzzer.timeLeft = 50;
+            buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .2;
+            buzzer.pwmPeriod = BUZZER_MIN_PERIOD * .8 + BUZZER_MIN_PERIOD;
+        }
+        if (distance >= 10 && distance < 200) {
+            buzzer.timeLeft = 25;
+            buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH;
+            buzzer.pwmPeriod = BUZZER_MAX_PERIOD;
+        }
+        if (distance > 1000) {
+            buzzer.pwmPulseWidth = 0;
+            buzzer.pwmPeriod = 0;
+        }
+
     }
     else {
         ledTurnOnOff(0,0,0);
