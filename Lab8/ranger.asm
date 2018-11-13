@@ -5,7 +5,7 @@
 RANGER_GPIO         .field  SYSCTL_PERIPH_GPIOB
 RANGER_TIMER        .field  SYSCTL_PERIPH_TIMER3
 RANGER_PORT			.field	GPIO_PORTB_BASE
-RANGER_PIN			.equ	GPIO_PIN_3
+RANGER_PIN			.field	GPIO_PIN_3
 TIME_BASE      	 	.field	TIMER3_BASE
 TIME_PAIR			.field  TIMER_CFG_SPLIT_PAIR
 TIME_UP				.field  TIMER_CFG_B_CAP_TIME_UP
@@ -43,11 +43,11 @@ rangerInit				 PUSH 	{LR}
 
 rangerDetect       	     PUSH 	{LR}
 						 LDR	r0,	RANGER_PORT
-						 MOV	r1, #RANGER_PIN
+						 MOV	r1, #GPIO_PIN_3
 						 BL		GPIOPinTypeGPIOOutput
 
 						 LDR	r0, RANGER_PORT
-						 MOV	r1, #RANGER_PIN
+						 MOV	r1, #GPIO_PIN_3
 						 MOV	r2, #0
 						 BL		GPIOPinWrite
 
@@ -55,21 +55,21 @@ rangerDetect       	     PUSH 	{LR}
 						 BL		waitUs
 
 						 LDR	r0, RANGER_PORT
-						 MOV	r1, #RANGER_PIN
-						 MOV	r2, #RANGER_PIN
+						 MOV	r1, #GPIO_PIN_3
+						 MOV	r2, #GPIO_PIN_3
 						 BL		GPIOPinWrite
 
 						 MOV	r0, #5
 						 BL		waitUs
 
 						 LDR	r0, RANGER_PORT
-						 MOV	r1, #RANGER_PIN
+						 MOV	r1, #GPIO_PIN_3
 						 MOV	r2, #0
 						 BL		GPIOPinWrite
 
 
 						 LDR	r0, RANGER_PORT
-						 MOV	r1, #RANGER_PIN
+						 MOV	r1, #GPIO_PIN_3
 						 BL		GPIOPinTypeTimer
 
 						 LDR	r0,	BASE_TIMER
@@ -103,17 +103,19 @@ while_loop1				 LDR  r0, TIME_BASE
 						 LDR 	r0, TIME_BASE
 						 LDR	r1, TIME_B
 						 BL		TimerValueGet
-						 PUSH	{r0}
+						 PUSH	{r1}
 
 						 LDR  r0, TIME_BASE
 						 LDR  r1, TIME_EVENT
 						 BL	  TimerIntClear
 
-						 POP {r1, r0}
+						 POP {r1}
+						 POP {r0}
 						 SUB r0, r0, r1
-						 ;MOV r2, #170
-						 ;MUL r0, r0, r2
-						 ;UDIV r0, r0, #50000
+						 MOV r2, #170
+						 MUL r0, r0, r2
+						 MOV r3, #50000
+						 UDIV r0, r0, r3
 
 						 POP {PC}
 
