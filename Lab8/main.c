@@ -7,13 +7,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdbool.h>
-//#include <inc/hw_memmap.h>
-//#include <inc/hw_ints.h>
-//#include <driverlib/gpio.h>
-//#include <driverlib/pin_map.h>
-//#include <driverlib/sysctl.h>
-//#include <driverlib/interrupt.h>
-//#include <driverlib/systick.h>
+
 
 #include <math.h>
 #include "launchpad.h"
