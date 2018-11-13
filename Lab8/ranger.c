@@ -22,14 +22,14 @@ void rangerInit(){
     //function is all good
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER3);
-    TimerConfigure(TIMER3, (TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_CAP_TIME_UP));
+    TimerConfigure(TIMER3_BASE, (TIMER_CFG_SPLIT_PAIR | TIMER_CFG_B_CAP_TIME_UP));
     TimerControlEvent(TIMER3_BASE, TIMER_B, TIMER_EVENT_BOTH_EDGES);
-    TimerEnable(TIMER3, TIMER_B);
+    TimerEnable(TIMER3_BASE, TIMER_B);
 }
 
 void sendStartPulse() {
     //all good
-    GPIOPinConfigure(GPIO_PORTB_BASE);
+    GPIOPinTypeGPIOOutput(GPIO_PORTB_BASE, GPIO_PIN_3);
     GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_3, 0);
     waitUs(2);
     GPIOPinWrite(GPIO_PORTB_BASE, GPIO_PIN_3, GPIO_PIN_3);
@@ -40,37 +40,38 @@ void sendStartPulse() {
 
 uint32_t rangerDetect() {
 
-     uint32_t val1 = 0;
-     uint32_t val2 = 0;
-     uint32_t distance = 0;
+     uint32_t val1;
+     uint32_t val2;
+     uint32_t distance;
+
 
      sendStartPulse();
-
      GPIOPinTypeTimer(GPIO_PORTB_BASE, GPIO_PIN_3);
      GPIOPinConfigure(GPIO_PB3_T3CCP1);
 
+
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-     while(TimerIntStatus(TIMER3_BASE, false)){
+
+
+     while(!TimerIntStatus(TIMER3_BASE, false)){
 
      }
+
      val1 = TimerValueGet(TIMER3_BASE, TIMER_B);
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
-//     uprintf("%d\n\r", "Val 1 is");
-
-     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-     while(TimerIntStatus(TIMER3_BASE, false)){
+     while(!TimerIntStatus(TIMER3_BASE, false)){
      }
      val2 = TimerValueGet(TIMER3_BASE, TIMER_B);
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
+//     uprintf("%u value 1 is\n\r", val1);
+//     uprintf("%u value 2 is\n\r", val2);
 
-//     uprintf("%d\n", val2);
+    // TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
-     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
-     distance =  (val2-val1)*340/2;
+     distance =  (val2-val1)*170/50000;
+     uprintf("distance is %u\n\r", distance);
      return distance;
 }
