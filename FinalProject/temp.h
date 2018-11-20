@@ -8,8 +8,7 @@
 #ifndef TEMP_H_
 #define TEMP_H_
 
-
 void adcInit();
-uint32_t adcVal();
+void adcVal(uint32_t data[]);
 
 #endif /* TEMP_H_ */

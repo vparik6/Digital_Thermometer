@@ -1,4 +1,4 @@
-                    .cdecls "stdint.h", "stdbool.h", "stdio.h", "inc/hw_memmap.h", "driverlib/pin_map.h", "driverlib/gpio.h", "driverlib/sysctl.h", "driverlib/adc.h", "launchpad.h", "rotary.h"
+                    .cdecls "stdint.h", "stdbool.h", "stdio.h", "inc/hw_memmap.h", "driverlib/pin_map.h", "driverlib/gpio.h", "driverlib/sysctl.h", "driverlib/adc.h", "launchpad.h", "temp.h"
 					.text
 ADC_PERIPH			.field	SYSCTL_PERIPH_ADC0
 ADC_PERIPH2			.field	SYSCTL_PERIPH_ADC1

@@ -13,16 +13,20 @@
 #include "launchpad.h"
 #include "seg7.h"
 #include "temp.h"
-#include "buzzer.h"
+#include "pwmbuzzer.h"
 #include <driverlib/adc.c>
 #include <driverlib/adc.h>
 #include <math.h>
-#include  <led.c>
+#include <led.c>
 
 // Buzzer-related constants
 #define BUZZER_CHECK_INTERVAL 10
 #define BUZZER_ON_TIME  30
 #define BUZZER_OFF_TIME (3000 - BUZZER_ON_TIME)
+#define BUZZER_MAX_PERIOD ((uint32_t) (50000000 / 261.63))
+#define BUZZER_MAX_PULSE_WIDTH 50000
+#define BUZZER_MIN_PERIOD ((uint32_t) (50000000 / 525.25))
+
 
 // The initial state of the 7-segment display: "00:00" with colon on
 seg7Display_t seg7Display = {0, 0, 0, 0, 0};
@@ -38,22 +42,26 @@ seg7Display_t seg7Display = {0, 0, 0, 0, 0};
  */
 
 // The buzzer object
-typedef struct
-{
+typedef struct{
     enum
     {
         Off, On, SwitchOff, SwitchOn
     } state;            // the running state of the buzzer system
     bool buzzing;       // if the buzzer is buzzing
     int32_t timeLeft;   // the time left for the buzzer to buzz or not buzz
+    int pwmPulseWidth;
+    int pwmPeriod;
 } buzzer_t;
-static buzzer_t buzzer = { Off, false, 0 };
+static volatile buzzer_t buzzer = { On, false, 0, BUZZER_MAX_PERIOD, 0 };
 
 // The buzzer play callback function
 void buzzerPlay(uint32_t time)
 {
     uint32_t delay = BUZZER_CHECK_INTERVAL;     // the delay for next callback
 
+
+   // buzzer.pwmPeriod = adcVal2() / 100;
+    //buzzer.pwmPulseWidth = adcVal() / 100;
     switch (buzzer.state)
     {
     case Off:           // the buzzer system is turned off, do nothing
@@ -65,7 +73,7 @@ void buzzerPlay(uint32_t time)
             // If the buzzer has been buzzing for enough time, turn it off
             if ((buzzer.timeLeft -= BUZZER_CHECK_INTERVAL) <= 0)
             {
-                buzzerOff();
+                buzzerPwmSet(0, buzzer.pwmPeriod);
                 buzzer.buzzing = false;
                 buzzer.timeLeft = BUZZER_OFF_TIME;
             }
@@ -75,7 +83,7 @@ void buzzerPlay(uint32_t time)
             // If the buzzer has been silent for enough time, turn it on
             if ((buzzer.timeLeft -= BUZZER_CHECK_INTERVAL) <= 0)
             {
-                buzzerOn();
+                buzzerPwmSet(buzzer.pwmPulseWidth, buzzer.pwmPeriod);
                 buzzer.buzzing = true;
                 buzzer.timeLeft = BUZZER_ON_TIME;
             }
@@ -84,13 +92,13 @@ void buzzerPlay(uint32_t time)
 
     case SwitchOff:             // De-activate the buzzer system
         if (buzzer.buzzing)
-            buzzerOff();
+        buzzerPwmSet(0, buzzer.pwmPeriod);
         buzzer.state = Off;
         buzzer.buzzing = Off;
         break;
 
     case SwitchOn:              // Activate the buzzer system
-        buzzerOn();
+        buzzerPwmSet(buzzer.pwmPulseWidth, buzzer.pwmPeriod);
         buzzer.state = On;
         buzzer.buzzing = true;
         buzzer.timeLeft = BUZZER_ON_TIME;
@@ -101,79 +109,62 @@ void buzzerPlay(uint32_t time)
     schdCallback(buzzerPlay, time + delay);
 }
 
+
+
 /*
  * The task for checking push button
  */
 
 // If the user has activated the buzzer system or not
-static bool userActivated = false;
+//static bool userActivated = false;
 
 // The callback function for checking the pushbuttons
-void checkPushButton(uint32_t time)
-{
-    uint32_t delay = 10;        // the default delay for the next checking
+//void checkPushButton(uint32_t time)
+//{
+//    uint32_t delay = 10;        // the default delay for the next checking
+//
+//    int code = pbRead();        // read the pushbutton
+//
+//    switch (code)
+//    {
+//    case 1:                     // SW1: Turn on the buzzer system
+//        userActivated = true;
+//        buzzer.state = SwitchOn;
+//        delay = 250;
+//        uprintf("%s\n\r", "button is on");
+//        break;
+//
+//    case 2:                     // SW2: Turn off the buzzer system
+//        userActivated = false;
+//        buzzer.state = SwitchOff;
+//        delay = 250;
+//        uprintf("%s\n\r", "button is off");
+//        break;
+//    }
+//
+//    // schedule the next callback
+//    schdCallback(checkPushButton, time + delay);
+//}
 
-    int code = pbRead();        // read the pushbutton
 
-    switch (code)
-    {
-    case 1:                     // SW1: Turn on the buzzer system
-        userActivated = true;
-        buzzer.state = SwitchOn;
-        delay = 250;
-        uprintf("%s\n\r", "button is on");
-        break;
 
-    case 2:                     // SW2: Turn off the buzzer system
-        userActivated = false;
-        buzzer.state = SwitchOff;
-        delay = 250;
-        uprintf("%s\n\r", "button is off");
-        break;
-    }
+void checkAdc(uint32_t time) {
+    uint32_t data[2];
 
-    // schedule the next callback
-    schdCallback(checkPushButton, time + delay);
+    adcVal(data);
+
+    uint32_t left = 100 - data[0]*100/4096;
+    uint32_t right = 100 - data[1]*100/4096;
+
+//    led.maxPulseWidth = LED_MAX_PULSE_WIDTH * left/99;
+
+    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
+    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
+
+    schdCallback(checkAdc, time + 100);
 }
 
 
-
-void displayValuesR(uint32_t time) {
-int degrees = 0;
-    degrees = adcVal();
-    degrees = 99-degrees*100/4096;
-
-        seg7Display.d1 = degrees % 10;
-
-        if(degrees < 10){
-            seg7Display.d2 = 0; // digits 0-9
-        }
-        else{
-            seg7Display.d2 = (degrees/10) % 10; // take the mod because we want the whole number to appear
-        }
-
-        seg7DigitUpdate(&seg7Display);
-        schdCallback(displayValuesR, time + 200);
-}
-/*
-void displayValuesL(uint32_t time) {
-int degrees2 = 0;
-    degrees2 = adcVal2();
-    degrees2 = 99-degrees2*100/4096;
-
-         seg7Display.d3 = degrees2 % 10;
-
-         if(degrees2 < 10){
-             seg7Display.d4 = 0;
-         }
-         else{
-             seg7Display.d4 = (degrees2/10) % 10;
-         }
-
-         seg7DigitUpdate(&seg7Display);
-         schdCallback(displayValuesL, time + 200);
-}
-*/
 int main(void) {
     lpInit();
     seg7Init();
@@ -181,11 +172,12 @@ int main(void) {
     buzzerInit();
     ledInit();
 
-    uprintf("%s\n\r", "Lab 6: ADC");
-    uprintf("%d\n\r", adcVal());
+//    uprintf("%s\n\r", "Lab 6: ADC");
+//    uprintf("%d\n\r", adcVal());
 
-    schdCallback(displayValuesR, 1000);
-    //schdCallback(displayValuesL, 1000);
+    schdCallback(checkAdc, 1000);
+//    schdCallback(checkPushButton, 1005);
+    schdCallback(buzzerPlay, 1010);
 
     // Run the event scheduler to process callback events
     while (true) {
