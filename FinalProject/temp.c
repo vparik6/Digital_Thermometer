@@ -38,6 +38,21 @@ void sendStartPulse() {
 
 }
 
+//unsigned short ReadByte(){
+//  unsigned short num = 0, t;
+//  DataDir = 1;
+//  for (i=0; i&lt;8; i++){
+//   while(!Data);
+//   TMR2 = 0;
+//   T2CON.TMR2ON = 1;  // Start TMR2 from 0 when a low to high data pulse
+//   while(Data);       // is detected, and wait until it falls low again.
+//   T2CON.TMR2ON = 0;  // Stop the TMR2 when the data pulse falls low.
+//   if(TMR2 &gt; 40) num |= 1&lt;&lt;(7-i);  // If time &gt; 40us, Data is 1
+//  }
+//  return num;
+//}
+
+
 uint32_t tempDetect() {
 
      uint32_t val1;
