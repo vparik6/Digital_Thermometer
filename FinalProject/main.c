@@ -59,9 +59,6 @@ void buzzerPlay(uint32_t time)
 {
     uint32_t delay = BUZZER_CHECK_INTERVAL;     // the delay for next callback
 
-
-   // buzzer.pwmPeriod = adcVal2() / 100;
-    //buzzer.pwmPulseWidth = adcVal() / 100;
     switch (buzzer.state)
     {
     case Off:           // the buzzer system is turned off, do nothing
