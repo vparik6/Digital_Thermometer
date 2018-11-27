@@ -145,7 +145,7 @@ void buzzerPlay(uint32_t time)
 
 //
 //
-void checkAdc(uint32_t time) {
+void checkTemp(uint32_t time) {
     uint32_t data;
 
     data = tempDetect();
@@ -158,7 +158,7 @@ void checkAdc(uint32_t time) {
 //    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
 //    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
 
-    schdCallback(checkAdc, time + 100);
+    schdCallback(checkTemp, time + 100);
 }
 
 
@@ -170,11 +170,11 @@ int main(void) {
     ledInit();
 
     uprintf("%s\n\r", "Hello World");
-    uprintf(" value is %d\n\r", tempDetect());
+    uprintf(" value is %u\n\r", tempDetect());
 
     uprintf("%s\n\r", "Hello World 2nd");
 
-//    schdCallback(checkAdc, 1000);
+//    schdCallback(checkTemp, 1000);
 //    schdCallback(checkPushButton, 1005);
     schdCallback(buzzerPlay, 1010);
 
