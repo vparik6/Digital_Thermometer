@@ -57,8 +57,12 @@ uint32_t tempDetect() {
 //     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, GPIO_PIN_3); // this now reads the data coming in
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT); // these two clear the two events that are not data bits
+     waitUs(30);
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
+     waitUs(80);
+     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+     waitUs(50);
+     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
      for (i = 0; i < 32; i++) {
          while(!TimerIntStatus(TIMER3_BASE, false)){}
@@ -75,7 +79,7 @@ uint32_t tempDetect() {
          //1 will be represented by the time difference being greater than 120 uS
          //0 will be represented by the time difference being less than 85 uS
 
-         uprintf("difference is %u\n\r", difference);
+//         uprintf("difference is %u\n\r", difference);
 
          if (difference <= 85) {
              value = value << 1 | 0;
@@ -85,7 +89,7 @@ uint32_t tempDetect() {
          }
      }
 
-     uprintf("value is %u\n\r", value);
+//     uprintf("value is %u\n\r", value);
      return value;
 }
 
