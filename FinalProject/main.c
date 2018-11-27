@@ -143,20 +143,20 @@ void buzzerPlay(uint32_t time)
 //    schdCallback(checkPushButton, time + delay);
 //}
 
-
-
+//
+//
 void checkAdc(uint32_t time) {
-    uint32_t data[2];
+    uint32_t data;
 
-    adcVal(data);
+    data = tempDetect();
 
-    uint32_t left = 100 - data[0]*100/4096;
-    uint32_t right = 100 - data[1]*100/4096;
+//    uint32_t left = 100 - data[0]*100/4096;
+//    uint32_t right = 100 - data[1]*100/4096;
 
 //    led.maxPulseWidth = LED_MAX_PULSE_WIDTH * left/99;
 
-    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
-    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
+//    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
+//    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
 
     schdCallback(checkAdc, time + 100);
 }
@@ -165,14 +165,16 @@ void checkAdc(uint32_t time) {
 int main(void) {
     lpInit();
     seg7Init();
-    adcInit();
+    tempInit();
     buzzerInit();
     ledInit();
 
-//    uprintf("%s\n\r", "Lab 6: ADC");
-//    uprintf("%d\n\r", adcVal());
+    uprintf("%s\n\r", "Hello World");
+    uprintf(" value is %d\n\r", tempDetect());
 
-    schdCallback(checkAdc, 1000);
+    uprintf("%s\n\r", "Hello World 2nd");
+
+//    schdCallback(checkAdc, 1000);
 //    schdCallback(checkPushButton, 1005);
     schdCallback(buzzerPlay, 1010);
 
