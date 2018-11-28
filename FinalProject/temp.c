@@ -58,19 +58,39 @@ uint32_t tempDetect() {
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT); // these two clear the two events that are not data bits
      waitUs(30);
+//     while(!TimerIntStatus(TIMER3_BASE, false)){
+//
+//     }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
      waitUs(80);
+//     while(!TimerIntStatus(TIMER3_BASE, false)){
+//
+//     }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
      waitUs(50);
+//     while(!TimerIntStatus(TIMER3_BASE, false)){
+//
+//     }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
      for (i = 0; i < 32; i++) {
-         while(!TimerIntStatus(TIMER3_BASE, false)){}
+         while(!TimerIntStatus(TIMER3_BASE, false)){
+
+         }
          val1 = TimerValueGet(TIMER3_BASE, TIMER_B);
 
          TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
-         while(!TimerIntStatus(TIMER3_BASE, false)){}
+//         while(!TimerIntStatus(TIMER3_BASE, false)){}
+//         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+//
+//         while(!TimerIntStatus(TIMER3_BASE, false)){}
+//         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+
+
+         while(!TimerIntStatus(TIMER3_BASE, false)){
+
+         }
          val2 = TimerValueGet(TIMER3_BASE, TIMER_B);
 
          TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
@@ -81,10 +101,10 @@ uint32_t tempDetect() {
 
 //         uprintf("difference is %u\n\r", difference);
 
-         if (difference <= 85) {
+         if (difference <= 14250) {
              value = value << 1 | 0;
          }
-         else if (difference >= 120) {
+         else if (difference >= 26000) {
              value = value << 1 | 1;
          }
      }
@@ -92,38 +112,3 @@ uint32_t tempDetect() {
 //     uprintf("value is %u\n\r", value);
      return value;
 }
-
-
-
-
-//void adcInit(){
-//    //Enables ADC0 module
-//    SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
-//
-//    //Wait for the ADC0 module to be ready
-//    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)){}
-//
-//    //Enables the first sample sequencer
-//    ADCSequenceConfigure(ADC0_BASE, 0, ADC_TRIGGER_PROCESSOR, 0);
-//    ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH2);
-//    ADCSequenceEnable(ADC0_BASE, 0);
-//
-//}
-//
-//void adcVal(uint32_t data[]){
-//
-//    //uint32_t ui32value;
-//
-//    //Trigger the sample sequence.
-//    ADCProcessorTrigger(ADC0_BASE, 0);
-//
-//    //Wait until sample sequence is complete
-//    while(!ADCIntStatus(ADC0_BASE, 0, false)){
-//    }
-//    //Read value from ADC
-//    ADCIntClear(ADC0_BASE,0);
-//    ADCSequenceDataGet(ADC0_BASE, 0 , data);
-//
-//}
-
-

@@ -170,7 +170,8 @@ int main(void) {
     ledInit();
 
     uprintf("%s\n\r", "Hello World");
-    uprintf(" value is %u\n\r", tempDetect());
+    uprintf("value is %x\n\r", tempDetect());
+//    uprintf("value2 is %x\n\r", tempDetect());
 
     uprintf("%s\n\r", "Hello World 2nd");
 
