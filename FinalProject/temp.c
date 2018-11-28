@@ -101,10 +101,10 @@ uint32_t tempDetect() {
 
 //         uprintf("difference is %u\n\r", difference);
 
-         if (difference <= 14250) {
+         if (difference <= 4250) {
              value = value << 1 | 0;
          }
-         else if (difference >= 26000) {
+         else if (difference >= 6000) {
              value = value << 1 | 1;
          }
      }
