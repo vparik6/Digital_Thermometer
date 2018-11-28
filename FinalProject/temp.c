@@ -67,12 +67,13 @@ uint32_t tempDetect() {
      }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 //     waitUs(50);
-     while(!TimerIntStatus(TIMER3_BASE, false)){
-
-     }
-     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+//     while(!TimerIntStatus(TIMER3_BASE, false)){
+//
+//     }
+//     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
      for (i = 0; i < 32; i++) {
+
          while(!TimerIntStatus(TIMER3_BASE, false)){
 
          }
@@ -80,11 +81,11 @@ uint32_t tempDetect() {
 
          TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
 
-         while(!TimerIntStatus(TIMER3_BASE, false)){
-
-         }
-         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
+//         while(!TimerIntStatus(TIMER3_BASE, false)){
+//
+//         }
+//         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+//
 //         while(!TimerIntStatus(TIMER3_BASE, false)){
 //
 //         }
@@ -104,10 +105,10 @@ uint32_t tempDetect() {
 
 //         uprintf("difference is %u\n\r", difference);
 
-         if (difference <= 4000) {
+         if (difference <= 30*50) {
              value = value << 1 | 0;
          }
-         else if (difference >= 6000) {
+         else if (difference >= 68*50) {
              value = value << 1 | 1;
          }
      }

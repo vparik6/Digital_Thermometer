@@ -169,9 +169,13 @@ int main(void) {
     buzzerInit();
     ledInit();
 
+    unsigned int reading = tempDetect();
+    unsigned int humidity = reading >> 16;
+    unsigned int temp = reading & 0xFFFF;
+
     uprintf("%s\n\r", "Hello World");
-    uprintf("humidity is %u\n\r", tempDetect());
-//    uprintf("value2 is %u\n\r", tempDetect());
+    uprintf("humidity is %u\n\r", humidity);
+    uprintf("temp is %u\n\r", temp);
 
     uprintf("%s\n\r", "Hello World 2nd");
 
