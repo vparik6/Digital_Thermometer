@@ -146,9 +146,19 @@ void buzzerPlay(uint32_t time)
 //
 //
 void checkTemp(uint32_t time) {
-    uint32_t data;
 
-    data = tempDetect();
+//    unsigned int reading = tempDetect();
+//    unsigned int humidity = reading >> 16;
+//    unsigned int temp = reading & 0xFFFF;
+////    int humidityFl = (humidity / 10) % 100;
+//
+//    uprintf("%s\n\r", "Hello World");
+//    uprintf("humidity is %u\n\r", humidity/10);
+//    uprintf("temp is %u\n\r", temp/10);
+//
+//    uprintf("%s\n\r", "Hello World 2nd");
+
+
 
 //    uint32_t left = 100 - data[0]*100/4096;
 //    uint32_t right = 100 - data[1]*100/4096;
@@ -158,7 +168,7 @@ void checkTemp(uint32_t time) {
 //    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
 //    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
 
-    schdCallback(checkTemp, time + 100);
+    schdCallback(checkTemp, time + 10);
 }
 
 
@@ -169,19 +179,24 @@ int main(void) {
     buzzerInit();
     ledInit();
 
-    unsigned int reading = tempDetect();
-    unsigned int humidity = reading >> 16;
-    unsigned int temp = reading & 0xFFFF;
 
-    uprintf("%s\n\r", "Hello World");
-    uprintf("humidity is %u\n\r", humidity);
-    uprintf("temp is %u\n\r", temp);
+    int iter = 0;
+    for (iter = 0; iter < 5; iter++) {
+        unsigned int reading = tempDetect();
+        unsigned int humidity = reading >> 16;
+        unsigned int temp = reading & 0xFFFF;
 
-    uprintf("%s\n\r", "Hello World 2nd");
+        uprintf("%s\n\r", "Hello World");
+        uprintf("humidity is %u\n\r", humidity/10);
+        uprintf("temp is %u\n\r", temp/10);
 
-//    schdCallback(checkTemp, 1000);
+        uprintf("%s\n\r", "Hello World 2nd");
+    }
+
+
+//    schdCallback(checkTemp, 10010);
 //    schdCallback(checkPushButton, 1005);
-    schdCallback(buzzerPlay, 1010);
+//    schdCallback(buzzerPlay, 1010);
 
     // Run the event scheduler to process callback events
     while (true) {
