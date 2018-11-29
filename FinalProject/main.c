@@ -152,6 +152,16 @@ void buzzerPlay(uint32_t time)
 
 //
 //
+
+
+static uint8_t colon = 0;
+
+int s1 = 0; //seconds on the right
+int s2 = 0; //seconds on the left
+int m1 = 0; //minutes on the right
+int m2 = 0; //minutes on the left
+
+
 void checkTemp(uint32_t time) {
 
     unsigned int reading = tempDetect();
@@ -164,17 +174,21 @@ void checkTemp(uint32_t time) {
 
     uprintf("%s\n\r", "Hello World 2nd");
 
+    if (temperature > 0) {
+        s2 = temperature % 10;
+        temperature /= 10;
+        m1 = temperature % 10;
+        temperature /= 10;
+        m2 = temperature % 10;
+        temperature /= 10;
+    }
 
-
-//    uint32_t left = 100 - data[0]*100/4096;
-//    uint32_t right = 100 - data[1]*100/4096;
-
-//    led.maxPulseWidth = LED_MAX_PULSE_WIDTH * left/99;
+    uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
 
 //    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
 //    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
 
-    schdCallback(checkTemp, time + 10);
+    schdCallback(checkTemp, time + 500);
 }
 
 
@@ -193,12 +207,7 @@ static uint8_t seg7Coding[11] = {
         // MORE CODINGS
 };
 
-static uint8_t colon = 0;
 
-int s1 = 0; //seconds on the right
-int s2 = 0; //seconds on the left
-int m1 = 0; //minutes on the right
-int m2 = 0; //minutes on the left
 
 
 // Update the clock display
@@ -232,15 +241,15 @@ int main(void) {
     buzzerInit();
     ledInit();
     seg7Init();
-
-    unsigned int reading = tempDetect();
-    unsigned int humidity = reading >> 16;
-    unsigned int temperature = reading & 0xFFFF;
-
-    unsigned int hum = humidity;
-    unsigned int temp = temperature;
-
-//    int i = 0;
+//
+//    unsigned int reading = tempDetect();
+//    unsigned int humidity = reading >> 16;
+//    unsigned int temperature = reading & 0xFFFF;
+//
+//    unsigned int hum = humidity;
+//    unsigned int temp = temperature;
+//
+////    int i = 0;
 //    for (i = 0; i < 3; i++) {
 ////        if (hum > 0) {
 ////            int digit = hum % 10;
@@ -251,24 +260,24 @@ int main(void) {
 //    }
 
 
-    uprintf("%s\n\r", "Hello World");
-    uprintf("humidity is %f\n\r", (float)humidity / 10.0);
-    uprintf("temp is %f\n\r", (float)temperature / 10.0);
+//    uprintf("%s\n\r", "Hello World");
+//    uprintf("humidity is %f\n\r", (float)humidity / 10.0);
+//    uprintf("temp is %f\n\r", (float)temperature / 10.0);
+//
+//    uprintf("%s\n\r", "Hello World 2nd");
 
-    uprintf("%s\n\r", "Hello World 2nd");
 
-
-    if (temperature > 0) {
-        s2 = temperature % 10;
-        temperature /= 10;
-        m1 = temperature % 10;
-        temperature /= 10;
-        m2 = temperature % 10;
-        temperature /= 10;
-    }
-
-    uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
-//    schdCallback(checkTemp, 100);
+//    if (temperature > 0) {
+//        s2 = temperature % 10;
+//        temperature /= 10;
+//        m1 = temperature % 10;
+//        temperature /= 10;
+//        m2 = temperature % 10;
+//        temperature /= 10;
+//    }
+//
+//    uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
+    schdCallback(checkTemp, 1000);
     schdCallback(clockUpdate, 1000);
 //    schdCallback(checkPushButton, 1005);
 //    schdCallback(buzzerPlay, 1010);
