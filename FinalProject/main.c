@@ -147,16 +147,15 @@ void buzzerPlay(uint32_t time)
 //
 void checkTemp(uint32_t time) {
 
-//    unsigned int reading = tempDetect();
-//    unsigned int humidity = reading >> 16;
-//    unsigned int temp = reading & 0xFFFF;
-////    int humidityFl = (humidity / 10) % 100;
+    unsigned int reading = tempDetect();
+    unsigned int humidity = reading >> 16;
+    unsigned int temperature = reading & 0xFFFF;
 //
-//    uprintf("%s\n\r", "Hello World");
-//    uprintf("humidity is %u\n\r", humidity/10);
-//    uprintf("temp is %u\n\r", temp/10);
-//
-//    uprintf("%s\n\r", "Hello World 2nd");
+    uprintf("%s\n\r", "Hello World");
+    uprintf("humidity is %f\n\r", (float)humidity / 10.0);
+    uprintf("temp is %f\n\r", (float)temperature / 10.0);
+
+    uprintf("%s\n\r", "Hello World 2nd");
 
 
 
@@ -179,22 +178,36 @@ int main(void) {
     buzzerInit();
     ledInit();
 
+//    unsigned int reading = tempDetect();
+//    unsigned int humidity = reading >> 16;
+//    unsigned int temperature = reading & 0xFFFF;
+//
+//    unsigned int hum = humidity;
+//    unsigned int temp = temperature;
+//
+//    int i = 0;
+//    for (i = 0; i < 3; i++) {
+//        if (hum > 0) {
+//            int digit = hum % 10;
+//            uprintf("humidity broken down %d\n\r", digit);
+//            hum /= 10;
+//        }
+//        if (temp > 0) {
+//            int digit = temp % 10;
+//            uprintf("temperature broken down %d\n\r", digit);
+//            temp /= 10;
+//        }
+//    }
 
-    int iter = 0;
-    for (iter = 0; iter < 5; iter++) {
-        unsigned int reading = tempDetect();
-        unsigned int humidity = reading >> 16;
-        unsigned int temp = reading & 0xFFFF;
 
-        uprintf("%s\n\r", "Hello World");
-        uprintf("humidity is %u\n\r", humidity/10);
-        uprintf("temp is %u\n\r", temp/10);
-
-        uprintf("%s\n\r", "Hello World 2nd");
-    }
+//    uprintf("%s\n\r", "Hello World");
+//    uprintf("humidity is %f\n\r", (float)humidity / 10.0);
+//    uprintf("temp is %f\n\r", (float)temperature / 10.0);
+//
+//    uprintf("%s\n\r", "Hello World 2nd");
 
 
-//    schdCallback(checkTemp, 10010);
+    schdCallback(checkTemp, 10010);
 //    schdCallback(checkPushButton, 1005);
 //    schdCallback(buzzerPlay, 1010);
 
