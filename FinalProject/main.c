@@ -25,7 +25,6 @@
 #include <driverlib/i2c.h>
 
 
-
 // Buzzer-related constants
 #define BUZZER_CHECK_INTERVAL 10
 #define BUZZER_ON_TIME  30
@@ -35,8 +34,25 @@
 #define BUZZER_MIN_PERIOD ((uint32_t) (50000000 / 525.25))
 
 
-// The initial state of the 7-segment display: "00:00" with colon on
-seg7Display_t seg7Display = {0, 0, 0, 0, 0};
+static uint8_t seg7Coding[11] = {
+        0b00111111,         // digit 0
+        0b00000110,         // digit 1
+        0b01011011,         // digit 2
+        0b01001111,         // digit 3
+        0b01100110,         // digit 4
+        0b01101101,         // digit 5
+        0b01111101,         // digit 6
+        0b00000111,         // digit 7
+        0b01111111,         // digit 8
+        0b01101111,         // digit 9
+        0b00111001,         // letter C
+
+};
+
+// Update the display
+enum {
+    Reset, Run, Pause
+}  sysState = Run;
 
 /*
  * The task for playing the buzzer.
@@ -47,8 +63,6 @@ seg7Display_t seg7Display = {0, 0, 0, 0, 0};
  *   SwitchOn: The buzzer system is to be turned on.
  *   SwitchOff: The buzzer system is to be turned off.
  */
-
-// The buzzer object
 typedef struct{
     enum
     {
@@ -59,6 +73,7 @@ typedef struct{
     int pwmPulseWidth;
     int pwmPeriod;
 } buzzer_t;
+
 static volatile buzzer_t buzzer = { On, false, 0, BUZZER_MAX_PERIOD, 0 };
 
 // The buzzer play callback function
@@ -108,12 +123,9 @@ void buzzerPlay(uint32_t time)
         buzzer.timeLeft = BUZZER_ON_TIME;
         break;
     }
-
     // schedule the next callback
     schdCallback(buzzerPlay, time + delay);
 }
-
-
 
 /*
  * The task for checking push button
@@ -150,12 +162,9 @@ void buzzerPlay(uint32_t time)
 //    schdCallback(checkPushButton, time + delay);
 //}
 
-//
-//
 
 
 static uint8_t colon = 0;
-
 int s1 = 0; //seconds on the right
 int s2 = 0; //seconds on the left
 int m1 = 0; //minutes on the right
@@ -192,47 +201,66 @@ void checkTemp(uint32_t time) {
 }
 
 
-static uint8_t seg7Coding[11] = {
-        0b00111111,         // digit 0
-        0b00000110,         // digit 1
-        0b01011011,         // digit 2
-        0b01001111,         // digit 3
-        0b01100110,         // digit 4
-        0b01101101,         // digit 5
-        0b01111101,         // digit 6
-        0b00000111,         // digit 7
-        0b01111111,         // digit 8
-        0b01101111,         // digit 9
-        0b00111001,         //letter C
-        // MORE CODINGS
-};
-
-
-
-
-// Update the clock display
-void clockUpdate(uint32_t time)                             // pointer to a 4-byte array
+void clockUpdate(uint32_t time)
 {
-    uint8_t code[4];                                    // The 7-segment code for the four clock digits
+    uint8_t code[4];
 
-    // Calculate the display digits and colon setting for the next update
+    if(sysState == Run){
+         //buzzer.state = SwitchOn;
 
-    // Display 01:23 on the 7-segment displays
-    // The colon ':' will flash on and off every 0.5 seconds
-
-    code[0] = seg7Coding[10] + colon;
-    code[1] = seg7Coding[s2] + colon;
-    code[2] = seg7Coding[m1] + colon;
-    code[3] = seg7Coding[m2] + colon;
-    colon = 0b10000000;
-    seg7Update(code);
-
-
-
+         code[0] = seg7Coding[10] + colon;
+         code[1] = seg7Coding[s2] + colon;
+         code[2] = seg7Coding[m1] + colon;
+         code[3] = seg7Coding[m2] + colon;
+         colon = 0b10000000;
+         seg7Update(code);
+    }
     // Call back after .5 second
     schdCallback(clockUpdate, time + 500);
 }
 
+void checkPushButton(uint32_t time){
+
+    uint32_t delay;
+    uint8_t code[4];                                   // The 7-segment code for the four clock digit
+    int codE = pbRead();
+
+    switch (codE) {
+
+    case 1:                         // SW1 is the Reset button, only when the stopwatch is paused
+        code[0] = seg7Coding[0] + colon;
+        code[1] = seg7Coding[0] + colon;
+        code[2] = seg7Coding[0] + colon;
+        code[3] = seg7Coding[0] + colon;
+        colon = 0b10000000;
+        seg7Update(code);
+
+        ledTurnOnOff(1,0,0);
+        sysState = Pause;
+        //buzzer.state = SwitchOff;
+
+        delay = 250;                // software debouncing
+        break;
+
+    case 2:
+        if(sysState == Pause) {
+              sysState = Run;
+              ledTurnOnOff(0,0,1);
+        }
+        else if(sysState == Run){
+              sysState = Pause;
+              ledTurnOnOff(0,1,0);
+        }
+
+        delay = 250;                // software debouncing
+        break;
+
+        default:
+        delay = 10;
+     }
+
+    schdCallback(checkPushButton, time + delay);
+}
 
 int main(void) {
     lpInit();
@@ -279,8 +307,8 @@ int main(void) {
 //    uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
     schdCallback(checkTemp, 1000);
     schdCallback(clockUpdate, 1000);
-//    schdCallback(checkPushButton, 1005);
-//    schdCallback(buzzerPlay, 1010);
+    schdCallback(checkPushButton, 1005);
+    //schdCallback(buzzerPlay, 1010);
 
     // Run the event scheduler to process callback events
     while (true) {
