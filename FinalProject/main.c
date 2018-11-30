@@ -1,9 +1,6 @@
 /*
- * main.c for ECE 266 Lab 3, stopwatch
- *
- *  Created on: Aug 23, 2016
- *  Last updated on: Sep 19, 2017
- *      Author: zzhang
+ * main.c for ECE 266 Final Project Group B4
+ * Implements temperature, displays on seg7, is button controlled and shows led state
  */
 
 #include <stdint.h>
@@ -54,15 +51,6 @@ enum {
     Reset, Run, Pause
 }  sysState = Run;
 
-/*
- * The task for playing the buzzer.
- *
- * The buzzer state and callback function. The buzzer system can be in four states:
- *   Off: The system is turned off. The buzzer is silent.
- *   On: The buzzer system is turned on. The buzzer will buzz periodically.
- *   SwitchOn: The buzzer system is to be turned on.
- *   SwitchOff: The buzzer system is to be turned off.
- */
 typedef struct{
     enum
     {
@@ -74,18 +62,15 @@ typedef struct{
     int pwmPeriod;
 } buzzer_t;
 
-static volatile buzzer_t buzzer = { On, false, 0, BUZZER_MAX_PERIOD, 0 };
+static volatile buzzer_t buzzer = { Off, false, 0, BUZZER_MAX_PERIOD, 0 };
 
 // The buzzer play callback function
 void buzzerPlay(uint32_t time)
 {
     uint32_t delay = BUZZER_CHECK_INTERVAL;     // the delay for next callback
-
-    switch (buzzer.state)
-    {
+    switch (buzzer.state) {
     case Off:           // the buzzer system is turned off, do nothing
         break;
-
     case On:            // the buzzer system is active, turn buzzer on and off
         if (buzzer.buzzing)
         {
@@ -132,35 +117,35 @@ void buzzerPlay(uint32_t time)
  */
 
 // If the user has activated the buzzer system or not
-//static bool userActivated = false;
+static bool userActivated = false;
 
 // The callback function for checking the pushbuttons
-//void checkPushButton(uint32_t time)
-//{
-//    uint32_t delay = 10;        // the default delay for the next checking
-//
-//    int code = pbRead();        // read the pushbutton
-//
-//    switch (code)
-//    {
-//    case 1:                     // SW1: Turn on the buzzer system
-//        userActivated = true;
-//        buzzer.state = SwitchOn;
-//        delay = 250;
-//        uprintf("%s\n\r", "button is on");
-//        break;
-//
-//    case 2:                     // SW2: Turn off the buzzer system
-//        userActivated = false;
-//        buzzer.state = SwitchOff;
-//        delay = 250;
-//        uprintf("%s\n\r", "button is off");
-//        break;
-//    }
-//
-//    // schedule the next callback
-//    schdCallback(checkPushButton, time + delay);
-//}
+void checkPushButton2(uint32_t time)
+{
+    uint32_t delay = 10;        // the default delay for the next checking
+
+    int code = pbRead();        // read the pushbutton
+
+    switch (code)
+    {
+    case 1:                     // SW1: Turn on the buzzer system
+        userActivated = true;
+        buzzer.state = SwitchOn;
+        delay = 250;
+        uprintf("%s\n\r", "button is on");
+        break;
+
+    case 2:                     // SW2: Turn off the buzzer system
+        userActivated = false;
+        buzzer.state = SwitchOff;
+        delay = 250;
+        uprintf("%s\n\r", "button is off");
+        break;
+    }
+
+    // schedule the next callback
+    schdCallback(checkPushButton2, time + delay);
+}
 
 
 
@@ -176,7 +161,24 @@ void checkTemp(uint32_t time) {
     unsigned int reading = tempDetect();
     unsigned int humidity = reading >> 16;
     unsigned int temperature = reading & 0xFFFF;
-//
+
+    if (temperature >= 250 && temperature <= 280) {
+        buzzer.timeLeft = 200;
+        buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .8 ;
+        buzzer.pwmPeriod = BUZZER_MIN_PERIOD;
+    }
+    if (temperature > 280 && temperature <= 300) {
+        buzzer.timeLeft = 100;
+        buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * .4;
+        buzzer.pwmPeriod = BUZZER_MIN_PERIOD * .5 + BUZZER_MIN_PERIOD;
+    }
+    if (temperature > 300) {
+        buzzer.timeLeft = 25;
+        buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH;
+        buzzer.pwmPeriod = BUZZER_MAX_PERIOD;
+
+    }
+
     uprintf("%s\n\r", "Hello World");
     uprintf("humidity is %f\n\r", (float)humidity / 10.0);
     uprintf("temp is %f\n\r", (float)temperature / 10.0);
@@ -193,10 +195,6 @@ void checkTemp(uint32_t time) {
     }
 
     uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
-
-//    buzzer.pwmPulseWidth = BUZZER_MAX_PULSE_WIDTH * left/99;
-//    buzzer.pwmPeriod = BUZZER_MIN_PERIOD+(BUZZER_MAX_PERIOD - BUZZER_MIN_PERIOD) * (99-right)/99;
-
     schdCallback(checkTemp, time + 500);
 }
 
@@ -206,7 +204,6 @@ void clockUpdate(uint32_t time)
     uint8_t code[4];
 
     if(sysState == Run){
-         //buzzer.state = SwitchOn;
 
          code[0] = seg7Coding[10] + colon;
          code[1] = seg7Coding[s2] + colon;
@@ -214,6 +211,7 @@ void clockUpdate(uint32_t time)
          code[3] = seg7Coding[m2] + colon;
          colon = 0b10000000;
          seg7Update(code);
+         buzzer.state = SwitchOn;
     }
     // Call back after .5 second
     schdCallback(clockUpdate, time + 500);
@@ -221,11 +219,11 @@ void clockUpdate(uint32_t time)
 
 void checkPushButton(uint32_t time){
 
-    uint32_t delay;
+    uint32_t delay = 500;
     uint8_t code[4];                                   // The 7-segment code for the four clock digit
-    int codE = pbRead();
+    int read = pbRead();
 
-    switch (codE) {
+    switch (read) {
 
     case 1:                         // SW1 is the Reset button, only when the stopwatch is paused
         code[0] = seg7Coding[0] + colon;
@@ -237,22 +235,20 @@ void checkPushButton(uint32_t time){
 
         ledTurnOnOff(1,0,0);
         sysState = Pause;
-        //buzzer.state = SwitchOff;
-
-        delay = 250;                // software debouncing
+        buzzer.state = SwitchOff;
         break;
 
     case 2:
         if(sysState == Pause) {
               sysState = Run;
               ledTurnOnOff(0,0,1);
+              buzzer.state = SwitchOn;
         }
         else if(sysState == Run){
               sysState = Pause;
               ledTurnOnOff(0,1,0);
+              buzzer.state = SwitchOff;
         }
-
-        delay = 250;                // software debouncing
         break;
 
         default:
@@ -269,46 +265,12 @@ int main(void) {
     buzzerInit();
     ledInit();
     seg7Init();
-//
-//    unsigned int reading = tempDetect();
-//    unsigned int humidity = reading >> 16;
-//    unsigned int temperature = reading & 0xFFFF;
-//
-//    unsigned int hum = humidity;
-//    unsigned int temp = temperature;
-//
-////    int i = 0;
-//    for (i = 0; i < 3; i++) {
-////        if (hum > 0) {
-////            int digit = hum % 10;
-////            uprintf("humidity broken down %d\n\r", digit);
-////            hum /= 10;
-////        }
-//
-//    }
 
-
-//    uprintf("%s\n\r", "Hello World");
-//    uprintf("humidity is %f\n\r", (float)humidity / 10.0);
-//    uprintf("temp is %f\n\r", (float)temperature / 10.0);
-//
-//    uprintf("%s\n\r", "Hello World 2nd");
-
-
-//    if (temperature > 0) {
-//        s2 = temperature % 10;
-//        temperature /= 10;
-//        m1 = temperature % 10;
-//        temperature /= 10;
-//        m2 = temperature % 10;
-//        temperature /= 10;
-//    }
-//
-//    uprintf("temperature broken down %d %d %d \n\r", m2,m1,s2);
     schdCallback(checkTemp, 1000);
     schdCallback(clockUpdate, 1000);
     schdCallback(checkPushButton, 1005);
-    //schdCallback(buzzerPlay, 1010);
+    schdCallback(checkPushButton2, 1005);
+    schdCallback(buzzerPlay, 1005);
 
     // Run the event scheduler to process callback events
     while (true) {
