@@ -1,117 +1,148 @@
-                    .cdecls "stdint.h", "stdbool.h", "stdio.h", "inc/hw_memmap.h", "driverlib/pin_map.h", "driverlib/gpio.h", "driverlib/sysctl.h", "driverlib/adc.h", "launchpad.h", "temp.h"
+
+; To include names declared in C
+ .cdecls "stdint.h", "stdbool.h", "stdio.h", "driverlib/pin_map.h", "inc/hw_memmap.h", "driverlib/sysctl.h", "launchpad.h", "ranger.h","driverlib/gpio.h", "driverlib/timer.h"
 					.text
-ADC_PERIPH			.field	SYSCTL_PERIPH_ADC0
-ADC_PERIPH2			.field	SYSCTL_PERIPH_ADC1
-ADC_PORT			.field 	ADC0_BASE
-ADC_PORT2			.field	ADC1_BASE
-ADC_TRIGGER			.field	ADC_TRIGGER_PROCESSOR
+TEMP_GPIO         .field  SYSCTL_PERIPH_GPIOB
+TEMP_TIMER        .field  SYSCTL_PERIPH_TIMER3
+TEMP_PORT			.field	GPIO_PORTB_BASE
+TEMP_PIN			.field	GPIO_PIN_3
+TIME_BASE      	 	.field	TIMER3_BASE
+TIME_PAIR			.field  TIMER_CFG_SPLIT_PAIR
+TIME_UP				.field  TIMER_CFG_B_CAP_TIME_UP
+TIME_B				.field	TIMER_B
+TIME_BOTH_EDGES		.field	TIMER_EVENT_BOTH_EDGES
+BASE_TIMER			.field	GPIO_PB3_T3CCP1
+TIME_EVENT			.field  TIMER_CAPB_EVENT
 
 
-;to initialize the adc sensor
-adcInit			PUSH 	{LR}
-				;   Call SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0)
-                LDR   r0, ADC_PERIPH
-                BL    SysCtlPeripheralEnable
+tempInit				 PUSH 	{LR}
+						 LDR	r0,	TEMP_GPIO
+						 BL		SysCtlPeripheralEnable
+
+						 LDR    r0, TEMP_TIMER
+						 BL		SysCtlPeripheralEnable
+
+						 LDR    r0, TEMP_PORT
+						 BL		SysCtlPeripheralEnable
+
+						 LDR	r0,	TIME_BASE
+						 LDR	r1, TIME_PAIR
+						 LDR	r2,	TIME_UP
+						 ORR	r1, r1, r2
+						 BL		TimerConfigure
+
+						 LDR	r0,	TIME_BASE
+						 LDR	r1,	TIME_B
+						 LDR	r2,	TIME_BOTH_EDGES
+						 BL		TimerControlEvent
+
+						 LDR	r0,	TIME_BASE
+						 LDR	r1, TIME_B
+						 BL		TimerEnable
+                		 POP   {PC}
+
+TempDetect       	     PUSH 	{LR}
+						 LDR	r0,	TIMER_PORT
+						 MOV	r1, #GPIO_PIN_3
+						 BL		GPIOPinTypeGPIOOutput
+
+						 LDR	r0, TIMER_PORT
+						 MOV	r1, #GPIO_PIN_3
+						 MOV	r2, #GPIO_PIN_3
+						 BL		GPIOPinWrite
+
+						 MOV	r0, #20
+						 BL		waitUs
+
+						 LDR	r0, TIMER_PORT
+						 MOV	r1, #GPIO_PIN_3
+						 MOV	r2, #0
+						 BL		GPIOPinWrite
+
+						 MOV	r0, #1.5
+						 BL		waitMs
+
+						 LDR	r0, TIMER_PORT
+						 MOV	r1, #GPIO_PIN_3
+						 MOV	r2, #GPIO_PIN_3
+						 BL		GPIOPinWrite
+
+						 MOV	r0, #30
+						 BL		waitUs
 
 
-                ;   Call ADCSequenceConfigure(ADC0_BASE, 0 /* sequencer #0 */, ADC_TRIGGER_PROCESSOR, 0 /* priority */);
-                LDR   r0, ADC_PORT
-                MOV   r1, #0
-                MOV   r2, #ADC_TRIGGER_PROCESSOR
-                MOV   r3, #0
+						 LDR	r0, TIMER_PORT
+						 MOV	r1, #GPIO_PIN_3
+						 BL		GPIOPinTypeTimer
 
-                BL    ADCSequenceConfigure
+						 LDR	r0,	BASE_TIMER
+						 BL		GPIOPinConfigure
 
-				;ADCSequenceStepConfigure(ADC0_BASE, 0 ,0 , ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH2)
-				LDR		r0, ADC_PORT
-				MOV		r1, #0
-				MOV 	r2, #0
-				MOV 	r3, #(ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH2)
-				BL    	ADCSequenceStepConfigure
-
-				;ADCSequenceEnable(ADC0_BASE, 0)
-				LDR		r0, ADC_PORT
-				MOV		r1, #0
-				BL		ADCSequenceEnable
+						 LDR	r0, TIME_BASE
+						 LDR	r1, TIME_EVENT
+						 BL		TimerIntClear
 
 
+while_loop				 LDR  r0, TIME_BASE
+						 MOV  r1, #0
+						 BL   TimerIntStatus
+						 CMP  r0, #1
+						 BEQ  while_loop
 
-				;   Call SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0)
-                LDR   r0, ADC_PERIPH2
-                BL    SysCtlPeripheralEnable
+						 LDR  r0, TIME_BASE
+						 LDR  r1, TIME_EVENT
+						 BL	  TimerIntClear
 
+while_loop1				 LDR  r0, TIME_BASE
+						 MOV  r1, #0
+						 BL   TimerIntStatus
+						 CMP  r0, #1
+						 BEQ  while_loop1
 
-                ;   Call ADCSequenceConfigure(ADC0_BASE, 0 /* sequencer #0 */, ADC_TRIGGER_PROCESSOR, 0 /* priority */);
-                LDR   r0, ADC_PORT2
-                MOV   r1, #0
-                MOV   r2, #ADC_TRIGGER_PROCESSOR
-                MOV   r3, #0
-
-                BL    ADCSequenceConfigure
-
-				;ADCSequenceStepConfigure(ADC0_BASE, 0 ,0 , ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH2)
-				LDR		r0, ADC_PORT2
-				MOV		r1, #0
-				MOV 	r2, #0
-				MOV 	r3, #(ADC_CTL_IE | ADC_CTL_END | ADC_CTL_CH4)
-				BL    	ADCSequenceStepConfigure
-
-				;ADCSequenceEnable(ADC0_BASE, 0)
-				LDR		r0, ADC_PORT2
-				MOV		r1, #0
-				BL		ADCSequenceEnable
-
-                POP   {PC}
-
-;to detect adc sensor
-adcVal			PUSH 	{LR}
-
-				;ADCProcessorTrigger(ADC0_BASE, 0);
-				LDR		r0, ADC_PORT
-				MOV		r1, #0
-				BL		ADCProcessorTrigger
-
-				;while (!ADCIntStatus(ADC0_BASE, 0, false))
-loop			LDR		r0, ADC_PORT
-				MOV		r1, #0
-				MOV		r2, #0
-				BL		ADCIntStatus
-				CMP 	r0, #0
-				BEQ		loop
-
-				;ADCSequenceDataGet(ADC0_BASE, 0, &adcReading);
-				SUB 	sp, #4
-				LDR		r0, ADC_PORT
-				MOV		r1, #0
-				MOV 	r2, sp
-				BL		ADCSequenceDataGet
-
-				POP		{r0, PC}
+						 LDR  r0, TIME_BASE
+						 LDR  r1, TIME_EVENT
+						 BL	  TimerIntClear
 
 
+while_loop2				 LDR  r0, TIME_BASE
+						 MOV  r1, #0
+						 BL   TimerIntStatus
+						 CMP  r0, #1
+						 BEQ  while_loop2
+
+						 LDR 	r0, TIME_BASE
+						 LDR	r1, TIME_B
+						 BL		TimerValueGet
+						 PUSH	{r0}
+
+						 LDR  r0, TIME_BASE
+						 LDR  r1, TIME_EVENT
+						 BL	  TimerIntClear
+
+while_loop3				 LDR  r0, TIME_BASE
+						 MOV  r1, #0
+						 BL   TimerIntStatus
+						 CMP  r0, #1
+						 BEQ  while_loop3
+
+						 LDR 	r0, TIME_BASE
+						 LDR	r1, TIME_B
+						 BL		TimerValueGet
+						 PUSH	{r1}
+
+						 LDR  r0, TIME_BASE
+						 LDR  r1, TIME_EVENT
+						 BL	  TimerIntClear
+
+						 POP {r1}
+						 POP {r0}
+						 SUB r0, r0, r1
 
 
-adcVal2			PUSH 	{LR}
+						 MOV r2, #170
+						 MUL r0, r0, r2
+						 MOV r3, #50000
+						 UDIV r0, r0, r3
 
-				;ADCProcessorTrigger(ADC0_BASE, 0);
-				LDR		r0, ADC_PORT2
-				MOV		r1, #0
-				BL		ADCProcessorTrigger
-
-				;while (!ADCIntStatus(ADC0_BASE, 0, false))
-loop2			LDR		r0, ADC_PORT2
-				MOV		r1, #0
-				MOV		r2, #0
-				BL		ADCIntStatus
-				CMP 	r0, #0
-				BEQ		loop2
-
-				;ADCSequenceDataGet(ADC0_BASE, 0, &adcReading);
-				SUB 	sp, #4
-				LDR		r0, ADC_PORT2
-				MOV		r1, #0
-				MOV 	r2, sp
-				BL		ADCSequenceDataGet
-
-				POP		{r0, PC}
+						 POP {PC}
 

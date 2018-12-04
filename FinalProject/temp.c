@@ -53,24 +53,18 @@ uint32_t tempDetect() {
      sendStartPulse();
      GPIOPinTypeTimer(GPIO_PORTB_BASE, GPIO_PIN_3);
      GPIOPinConfigure(GPIO_PB3_T3CCP1);
-//     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, GPIO_PIN_3); // this now reads the data coming in
 
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT); // these two clear the two events that are not data bits
-//     waitUs(30);
      while(!TimerIntStatus(TIMER3_BASE, false)){
 
      }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-//     waitUs(80);
+
      while(!TimerIntStatus(TIMER3_BASE, false)){
 
      }
      TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-//     waitUs(50);
-//     while(!TimerIntStatus(TIMER3_BASE, false)){
-//
-//     }
-//     TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
+
 
      for (i = 0; i < 32; i++) {
 
@@ -80,17 +74,6 @@ uint32_t tempDetect() {
          val1 = TimerValueGet(TIMER3_BASE, TIMER_B);
 
          TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
-//         while(!TimerIntStatus(TIMER3_BASE, false)){
-//
-//         }
-//         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-//
-//         while(!TimerIntStatus(TIMER3_BASE, false)){
-//
-//         }
-//         TimerIntClear(TIMER3_BASE, TIMER_CAPB_EVENT);
-
 
          while(!TimerIntStatus(TIMER3_BASE, false)){
 
@@ -102,8 +85,6 @@ uint32_t tempDetect() {
          // this part of the code will determine if the bit is either 1 or 0
          //1 will be represented by the time difference being greater than 120 uS
          //0 will be represented by the time difference being less than 80 uS
-
-//         uprintf("difference is %u\n\r", difference);
 
          if (difference <= 30*50) {
              value = value << 1 | 0;
