@@ -2,7 +2,7 @@
  * temp.h
  *
  *  Created on: Oct 16, 2018
- *      Author: jniero2
+ *      Author: jniero2, vparik6
  */
 
 #ifndef TEMP_H_
